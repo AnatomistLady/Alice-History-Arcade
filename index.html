@@ -45,11 +45,11 @@
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .round-tag { background: #0f172a; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border); }
-    .mastery-badge { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+    .mastery-badge { font-size: 0.85rem; font-weight: 700; color: var(--warning); }
 
     /* Progress bar */
     .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 16px; overflow: hidden; margin: 0.5rem 0; border: 1px solid var(--border); }
-    .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.4s ease; }
+    .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.3s ease; }
     .mastery-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 1rem; }
 
     /* Chronology List Styles */
@@ -143,7 +143,7 @@
       <div class="mastery-bar-wrap" aria-label="Chronology mastery"><div class="mastery-bar-fill" id="chronoFill"></div></div>
       <div class="mastery-stats">
         <span id="chronoMasteredText">Mastered: 0 / 15</span>
-        <span id="chronoPctText">0% Mastered</span>
+        <span id="chronoPctText">0% Progress</span>
       </div>
 
       <div id="chronoActiveCard" class="card">
@@ -173,7 +173,7 @@
       <div class="mastery-bar-wrap" aria-label="Quiz mastery"><div class="mastery-bar-fill" id="quizFill"></div></div>
       <div class="mastery-stats">
         <span id="quizMasteredText">Mastered: 0 / 100</span>
-        <span id="quizPctText">0% Mastered</span>
+        <span id="quizPctText">0% Progress</span>
       </div>
 
       <div id="quizActiveCard" class="card">
@@ -552,9 +552,9 @@
     ];
 
     /* ============================================================
-       FIXED PERSISTENT STORAGE & REACTIVE PROGRESS BAR
+       PERSISTENCE SYSTEM: WEIGHTED PROGRESSION
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_DYNAMIC_V5';
+    const STORAGE_KEY = 'HIST1301_ALICE_INSTANT_V6';
     let arcadeData = { chrono: {}, quiz: {} };
 
     function loadStore() {
@@ -568,7 +568,7 @@
           }
         }
       } catch (err) {
-        console.warn("Storage restricted", err);
+        console.warn("Storage access restricted", err);
       }
 
       timelineChallenges.forEach(c => {
@@ -585,39 +585,47 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(arcadeData));
       } catch (err) {
-        console.warn("Save failed", err);
+        console.warn("Storage write failed", err);
       }
       updateAllProgressBars();
     }
 
     function updateAllProgressBars() {
-      // 1. Chronology calculations
-      let cMaster = 0;
+      // 1. Chronology: Count full masters and partial points
+      let cFullyMastered = 0;
+      let cPoints = 0;
       timelineChallenges.forEach(c => {
-        if ((arcadeData.chrono[c.id] || 0) >= 2) cMaster++;
+        const lvl = arcadeData.chrono[c.id] || 0;
+        if (lvl >= 2) cFullyMastered++;
+        cPoints += Math.min(lvl, 2);
       });
-      const cPct = Math.round((cMaster / timelineChallenges.length) * 100);
+      const cMaxPoints = timelineChallenges.length * 2;
+      const cPct = Math.round((cPoints / cMaxPoints) * 100);
+
       const cFill = document.getElementById('chronoFill');
       const cTxt = document.getElementById('chronoMasteredText');
       const cPctTxt = document.getElementById('chronoPctText');
-
       if (cFill) cFill.style.width = `${cPct}%`;
-      if (cTxt) cTxt.textContent = `Mastered: ${cMaster} / ${timelineChallenges.length}`;
-      if (cPctTxt) cPctTxt.textContent = `${cPct}% Mastered`;
+      if (cTxt) cTxt.textContent = `Mastered: ${cFullyMastered} / ${timelineChallenges.length} (${cPoints} pts)`;
+      if (cPctTxt) cPctTxt.textContent = `${cPct}% Progress`;
 
-      // 2. Quiz calculations
-      let qMaster = 0;
+      // 2. Quiz: Give immediate 50% credit for level 1, 100% for level 2
+      let qFullyMastered = 0;
+      let qPoints = 0;
       quizQuestions.forEach(q => {
-        if ((arcadeData.quiz[q.id] || 0) >= 2) qMaster++;
+        const lvl = arcadeData.quiz[q.id] || 0;
+        if (lvl >= 2) qFullyMastered++;
+        qPoints += Math.min(lvl, 2);
       });
-      const qPct = Math.round((qMaster / quizQuestions.length) * 100);
+      const qMaxPoints = quizQuestions.length * 2;
+      const qPct = Math.round((qPoints / qMaxPoints) * 100);
+
       const qFill = document.getElementById('quizFill');
       const qTxt = document.getElementById('quizMasteredText');
       const qPctTxt = document.getElementById('quizPctText');
-
       if (qFill) qFill.style.width = `${qPct}%`;
-      if (qTxt) qTxt.textContent = `Mastered: ${qMaster} / ${quizQuestions.length}`;
-      if (qPctTxt) qPctTxt.textContent = `${qPct}% Mastered`;
+      if (qTxt) qTxt.textContent = `Mastered: ${qFullyMastered} / ${quizQuestions.length} (${qPoints} pts)`;
+      if (qPctTxt) qPctTxt.textContent = `${qPct}% Progress`;
     }
 
     function switchMode(mode) {
@@ -823,11 +831,11 @@
         arcadeData.quiz[q.id] = 0;
       }
 
-      // Update the badge on the active card immediately
+      // Update question badge
       const newLvl = arcadeData.quiz[q.id] || 0;
       document.getElementById('quizBadge').textContent = `Mastery: ${newLvl}/2 ${newLvl >= 2 ? '★' : ''}`;
 
-      // Save and reactively update the top progress bar on every single tap
+      // Immediately write to storage and update top bar
       saveStore();
       document.getElementById('quizNextBtn').style.display = 'inline-block';
     }
@@ -905,7 +913,7 @@
     }
 
     /* ============================================================
-       INITIALIZATION CALLS
+       INITIALIZATION
        ============================================================ */
     loadStore();
     startChronologyRound();
