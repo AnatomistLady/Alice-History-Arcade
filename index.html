@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HIST 1301 Unit 1 Master Study Arcade</title>
+  <title>HIST 1301 Unit 1 Study Arcade</title>
   <style>
     :root {
       --bg: #0b132b;
@@ -41,7 +41,7 @@
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* Shared Card Styles */
+    /* Cards & Shared UI */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .round-tag { background: #0f172a; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border); }
@@ -130,8 +130,8 @@
       <p>Unit 1 Interactive Engine (Prof. Chad Tomaselli)</p>
     </header>
 
-    <!-- Top Mode Navigation -->
-    <nav class="arcade-tabs" role="tablist" aria-label="Study Mode Selection">
+    <!-- Navigation Tabs -->
+    <nav class="arcade-tabs" role="tablist" aria-label="Arcade Modes">
       <button class="tab-btn" id="tab-chrono" role="tab" aria-selected="true" aria-controls="panel-chrono" onclick="switchMode('chrono')">Chronology Arcade</button>
       <button class="tab-btn" id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" onclick="switchMode('quiz')">Mastery Quiz (100)</button>
       <button class="tab-btn" id="tab-match" role="tab" aria-selected="false" aria-controls="panel-match" onclick="switchMode('match')">Matching Lab</button>
@@ -140,7 +140,7 @@
 
     <!-- 1. CHRONOLOGY ARCADE -->
     <section id="panel-chrono" class="panel active" role="tabpanel" aria-labelledby="tab-chrono">
-      <div class="mastery-bar-wrap" aria-label="Chronology overall mastery progress"><div class="mastery-bar-fill" id="chronoFill"></div></div>
+      <div class="mastery-bar-wrap" aria-label="Chronology mastery"><div class="mastery-bar-fill" id="chronoFill"></div></div>
       <div class="mastery-stats">
         <span id="chronoMasteredText">Mastered: 0 / 15</span>
         <span id="chronoPctText">0% Mastered</span>
@@ -152,7 +152,7 @@
           <span class="mastery-badge" id="chronoBadge">Mastery: 0/2</span>
         </div>
         <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1rem;" id="chronoPrompt"></p>
-        <ul class="timeline-list" id="chronoTimeline" aria-label="Timeline items to order"></ul>
+        <ul class="timeline-list" id="chronoTimeline"></ul>
         <div class="feedback-box" id="chronoFeedback" role="alert"></div>
         <div class="bottom-bar">
           <button class="action-btn" id="chronoSubmitBtn" onclick="checkChronology()">Submit Order</button>
@@ -170,7 +170,7 @@
 
     <!-- 2. MASTERY QUIZ -->
     <section id="panel-quiz" class="panel" role="tabpanel" aria-labelledby="tab-quiz">
-      <div class="mastery-bar-wrap" aria-label="Quiz overall mastery progress"><div class="mastery-bar-fill" id="quizFill"></div></div>
+      <div class="mastery-bar-wrap" aria-label="Quiz mastery"><div class="mastery-bar-fill" id="quizFill"></div></div>
       <div class="mastery-stats">
         <span id="quizMasteredText">Mastered: 0 / 100</span>
         <span id="quizPctText">0% Mastered</span>
@@ -182,7 +182,7 @@
           <span class="mastery-badge" id="quizBadge">Mastery: 0/2</span>
         </div>
         <p class="question-prompt" id="quizPrompt"></p>
-        <div class="options-grid" id="quizOpts" role="group" aria-label="Multiple choice answers"></div>
+        <div class="options-grid" id="quizOpts"></div>
         <div class="feedback-box" id="quizFeedback" role="alert"></div>
         <div class="bottom-bar" style="justify-content: flex-end;">
           <button class="action-btn" id="quizNextBtn" style="display:none;" onclick="nextQuizQuestion()">Continue</button>
@@ -200,9 +200,9 @@
     <!-- 3. MATCHING LAB -->
     <section id="panel-match" class="panel" role="tabpanel" aria-labelledby="tab-match">
       <div class="card">
-        <h2 style="font-size:1.15rem; margin-bottom:0.75rem; color:var(--accent);">Unit 1 Comprehensive Matching Lab</h2>
-        <table class="matching-table" aria-label="Concept matching exercise">
-          <thead><tr><th style="width:60%;">Description</th><th style="width:40%;">Term / Plan</th></tr></thead>
+        <h2 style="font-size:1.15rem; margin-bottom:0.75rem; color:var(--accent);">Puritan Ideals, Reform Conferences & Constitutional Plans</h2>
+        <table class="matching-table" aria-label="Matching table">
+          <thead><tr><th style="width:60%;">Description / Prompt</th><th style="width:40%;">Term / Plan</th></tr></thead>
           <tbody id="matchingBody"></tbody>
         </table>
         <div class="bottom-bar">
@@ -216,7 +216,7 @@
     <section id="panel-cards" class="panel" role="tabpanel" aria-labelledby="tab-cards">
       <div class="card">
         <div class="card-top">
-          <span class="round-tag" id="cardCounter">Card 1 of 10</span>
+          <span class="round-tag" id="cardCounter">Card 1 of 12</span>
           <span style="font-size:0.85rem; color:var(--text-muted);">Tap / Spacebar to Flip</span>
         </div>
         <div class="card-wrap" onclick="toggleCard()" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCard()">
@@ -236,7 +236,7 @@
 
   <script>
     /* ============================================================
-       DATA: TIMELINE CHALLENGES (15)
+       DATA: TIMELINE CHALLENGES (15 ERA CHALLENGES)
        ============================================================ */
     const timelineChallenges = [
       {
@@ -249,7 +249,7 @@
           { text: "The Starving Time reduces Jamestown population through starvation and cannibalism", year: "1609–1610" },
           { text: "John Rolfe cultivates a cured, mild strain of West Indian tobacco", year: "1612" }
         ],
-        rationale: "Roanoke preceded Jamestown (1607). John Smith took command in 1608, the Starving Time struck in winter 1609–1610, and Rolfe saved the colony with tobacco in 1612."
+        rationale: "Roanoke preceded Jamestown (1607). John Smith took command in 1608, the Starving Time struck in winter 1609–1610, and Rolfe saved the colony with cash-crop tobacco in 1612."
       },
       {
         id: "c2",
@@ -289,7 +289,7 @@
         id: "c5",
         title: "First Acts of British Taxation (1301.3c & 1301.3d)",
         events: [
-          { text: "Sugar Act lowers molasses duties while authorizing vice-admiralty prosecutions", year: "1764" },
+          { text: "Sugar Act lowers molasses duties while tightening customs enforcement", year: "1764" },
           { text: "Stamp Act imposes internal taxes on domestic documents, newspapers, and dice", year: "1765 (Mar)" },
           { text: "Stamp Act Congress meets in New York declaring 'No Taxation Without Representation'", year: "1765 (Oct)" },
           { text: "Declaratory Act affirms Parliament's absolute authority to bind colonies 'in all cases whatsoever'", year: "1766" }
@@ -415,7 +415,7 @@
     ];
 
     /* ============================================================
-       DATA: 100 QUESTION POOL (ALIGNED TO TOMASELLI LECTURES)
+       DATA: 100 QUESTION POOL (TOMASELLI CURATED)
        ============================================================ */
     const quizQuestions = [
       { id: "q1", q: "What was John Rolfe's primary economic contribution to Jamestown (1301.1c)?", opts: ["Discovering gold in the James River", "Introducing and cultivating a mild, cured strain of West Indian tobacco", "Constructing iron mills", "Drafting the Mayflower Compact"], a: 1, exp: "Rolfe cultivated a mild West Indian tobacco that became Virginia's cash crop, providing the economic salvation Jamestown required." },
@@ -524,35 +524,37 @@
        DATA: MATCHING LAB & FLASHCARDS
        ============================================================ */
     const matchingItems = [
-      { desc: "Salvation based on your own grace and merit, not those around you; all who are saved are equal in God's eyes.", correct: "Individualism" },
-      { desc: "Each person must read and interpret Scripture directly; literacy and schooling were necessary for salvation.", correct: "Education" },
-      { desc: "Work hard, be thrifty, and prosper for God; economic success signaled salvation, while poverty signaled damnation.", correct: "Puritan Work Ethic" },
+      { desc: "Salvation based on your own grace and merit, not those around you; all who are saved are 'equal' in God's eye.", correct: "Individualism" },
+      { desc: "Each person should be able to read and understand the bible for themselves; literacy and studies necessary for salvation.", correct: "Education" },
+      { desc: "Find your calling, work hard, be thrifty, and prosper for God; success meant salvation, poverty meant damnation.", correct: "Puritan Work Ethic" },
       { desc: "1785 bilateral conference hosted by George Washington resolving Potomac River commercial navigation disputes.", correct: "Mount Vernon Conference" },
-      { desc: "1786 convention in Maryland that drew only five states, leading Alexander Hamilton to call for Philadelphia convention.", correct: "Annapolis Convention" },
+      { desc: "1786 interstate convention in Maryland drawing only five states; Hamilton called for Philadelphia reform convention.", correct: "Annapolis Convention" },
       { desc: "1787 proposal by James Madison presenting three branches with a bicameral legislature apportioned by population.", correct: "Virginia Plan" },
       { desc: "1787 proposal by William Paterson calling for a unicameral legislature with equal voting power per state.", correct: "New Jersey Plan" },
       { desc: "Roger Sherman's compromise establishing a bicameral legislature with a proportional House and equal Senate.", correct: "Great Compromise" },
-      { desc: "Constitutional bargain counting 60% of enslaved inhabitants for congressional seats and direct taxation.", correct: "Three-Fifths Compromise" },
-      { desc: "Constitutional provision barring Congress from prohibiting the transatlantic slave trade until 1808.", correct: "Slave Trade Compromise" }
+      { desc: "Constitutional compromise counting five enslaved persons as three free persons for representation and direct taxes.", correct: "Three-Fifths Compromise" },
+      { desc: "Constitutional bargain preventing Congress from banning transatlantic slave importations until 1808.", correct: "Slave Trade Compromise" }
     ];
 
     const flashcards = [
-      { term: "Iroquois Confederacy", def: "Powerful northeastern Haudenosaunee alliance of Six Nations that balanced European rivals through trade and diplomacy." },
+      { term: "Iroquois Confederacy (1500–1780)", def: "Powerful northeastern Haudenosaunee alliance of Five (later Six) Native nations balancing European rivals via diplomacy and fur trade." },
       { term: "Mayflower Compact (1620)", def: "The first covenant of self-governance in New England, establishing a civil body politic ruled by majority consent." },
-      { term: "Bacon's Rebellion (1676)", def: "Frontier Virginia uprising uniting white and black laborers, accelerating the shift toward lifelong African chattel slavery." },
+      { term: "Bacon's Rebellion (1675–1677)", def: "Virginia frontier uprising uniting white and black laborers, accelerating the planter elite's transition toward lifelong African chattel slavery." },
       { term: "Writs of Assistance", def: "Blanket, non-specific British search warrants allowing customs officers to search ships and warehouses for smuggled goods." },
-      { term: "Land Ordinance of 1785", def: "Confederation law surveying western lands into townships and reserving Section 16 to fund public schools." },
-      { term: "Northwest Ordinance (1787)", def: "Established a 60,000-person path to equal statehood and permanently banned slavery north of the Ohio River." },
-      { term: "Shays' Rebellion (1786–87)", def: "Armed uprising of indebted Massachusetts farmers exposing the fatal military and economic weaknesses of the Articles." },
-      { term: "Supremacy Clause (Art. VI)", def: "Constitutional clause establishing that the federal Constitution, laws, and treaties override conflicting state laws." },
-      { term: "Electoral College", def: "Constitutional indirect election mechanism designed to balance state power and buffer executive selection from direct factions." },
+      { term: "Land Ordinance of 1785", def: "Confederation law surveying western lands into six-mile townships and reserving Section 16 to fund public schools." },
+      { term: "Northwest Ordinance of 1787", def: "Established a 60,000-person path to equal statehood and permanently banned slavery north of the Ohio River." },
+      { term: "Shays' Rebellion (1786–1787)", def: "Armed uprising of indebted Massachusetts farmers exposing the fatal military and economic weaknesses of the Articles." },
+      { term: "Mount Vernon Conference (1785)", def: "Bilateral meeting between MD and VA resolving Potomac navigation disputes, starting the momentum toward Philadelphia." },
+      { term: "Virginia Plan (1787)", def: "James Madison's proposal for three branches of government and a bicameral legislature apportioned strictly by population." },
+      { term: "New Jersey Plan (1787)", def: "William Paterson's small-state counterproposal calling for a unicameral legislature with equal voting power per state." },
+      { term: "Supremacy Clause (Art. VI)", def: "Constitutional clause establishing that the federal Constitution, laws, and treaties override conflicting state statutes." },
       { term: "Tenth Amendment", def: "Reserves all powers not delegated to the federal government nor prohibited to the states to the states, or to the people." }
     ];
 
     /* ============================================================
        PERSISTENT STORAGE & MASTERY SYSTEM
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_TOMASELLI_MASTER_ARCADE_V3';
+    const STORAGE_KEY = 'HIST1301_ALICE_FINAL_MASTER_V4';
     let arcadeData = { chrono: {}, quiz: {} };
 
     function loadStore() {
@@ -566,7 +568,7 @@
           }
         }
       } catch (err) {
-        console.warn("Storage access restricted", err);
+        console.warn("Storage restricted", err);
       }
 
       timelineChallenges.forEach(c => {
@@ -582,9 +584,7 @@
     function saveStore() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(arcadeData));
-      } catch (err) {
-        console.warn("Storage save failed", err);
-      }
+      } catch (err) {}
       updateAllProgressBars();
     }
 
@@ -834,7 +834,7 @@
         row.innerHTML = `
           <td>${item.desc}</td>
           <td>
-            <select id="matchSel-${i}" aria-label="Match for description ${i+1}">
+            <select id="matchSel-${i}" aria-label="Match selection ${i+1}">
               ${choices.map(c => `<option value="${c}">${c}</option>`).join('')}
             </select>
           </td>
