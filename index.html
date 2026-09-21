@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HIST 1301 Chronology Arcade | Unit 1</title>
+  <title>HIST 1301 Study Arcade | Unit 1</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
+      --bg: #0b132b;
+      --card-bg: #1c2541;
+      --card-inner: #0f172a;
+      --border: #3a506b;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --accent: #38bdf8;
@@ -21,124 +22,222 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 1rem; display: flex; justify-content: center; min-height: 100vh; }
-    .app-shell { width: 100%; max-width: 680px; margin: auto; }
+    .app-shell { width: 100%; max-width: 760px; margin: auto; }
 
     header { text-align: center; margin-bottom: 1.25rem; }
-    header h1 { font-size: 1.4rem; color: var(--accent); margin-bottom: 0.25rem; }
-    header p { font-size: 0.85rem; color: var(--text-muted); }
+    header h1 { font-size: 1.6rem; color: var(--accent); margin-bottom: 0.25rem; }
+    header p { font-size: 0.9rem; color: var(--text-muted); }
 
-    /* Mastery Progress */
-    .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 14px; overflow: hidden; margin: 1rem 0 0.5rem; border: 1px solid var(--card-border); }
-    .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.4s ease; }
-    .mastery-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+    /* Nav Tabs */
+    .arcade-tabs { display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0 1.25rem; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--card-bg); color: var(--text); border: 2px solid var(--border);
+      padding: 0.6rem 1rem; font-size: 0.9rem; font-weight: 700; border-radius: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn:hover { background-color: #273559; }
+    .tab-btn[aria-selected="true"] { background: var(--accent); color: #0b132b; border-color: var(--accent); }
 
-    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Shared Card Styles */
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-    .round-tag { background: #334155; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
-    .mastery-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+    .round-tag { background: #0f172a; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border); }
+    .mastery-badge { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
-    .instructions { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; }
+    /* Progress bar */
+    .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 14px; overflow: hidden; margin: 0.5rem 0; border: 1px solid var(--border); }
+    .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.4s ease; }
+    .mastery-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 1rem; }
 
-    /* Drag / Move Chronology Items */
+    /* Chronology List Styles */
     .timeline-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; list-style: none; }
     .timeline-item {
-      background: #162032; border: 2px solid var(--card-border); color: var(--text); padding: 0.75rem 0.9rem;
+      background: var(--card-inner); border: 2px solid var(--border); color: var(--text); padding: 0.75rem 0.9rem;
       border-radius: 8px; font-size: 0.92rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
       user-select: none; transition: border-color 0.2s, background-color 0.2s;
     }
     .timeline-item.correct { border-color: var(--success) !important; background: rgba(34, 197, 94, 0.15) !important; }
     .timeline-item.incorrect { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.15) !important; }
-
     .item-content { display: flex; align-items: center; gap: 0.6rem; flex: 1; }
     .pos-index { font-weight: 800; color: var(--accent); font-size: 0.85rem; width: 22px; }
     .event-label { font-size: 0.95rem; font-weight: 500; }
     .year-tag { font-size: 0.8rem; color: var(--warning); font-weight: 700; display: none; margin-left: 0.4rem; }
     .year-tag.revealed { display: inline-block; }
-
     .btn-shift-group { display: flex; gap: 0.35rem; }
     .btn-shift {
-      background: #334155; border: 1px solid var(--card-border); color: var(--text); padding: 0.35rem 0.6rem;
+      background: #273559; border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.6rem;
       border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: bold;
     }
-    .btn-shift:hover:not(:disabled) { background: var(--accent); color: #0f172a; }
+    .btn-shift:hover:not(:disabled) { background: var(--accent); color: #0b132b; }
     .btn-shift:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .feedback-box {
-      margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.45; display: none;
+    /* Quiz Option Styles */
+    .question-prompt { font-size: 1.05rem; font-weight: 600; line-height: 1.45; margin-bottom: 1rem; }
+    .options-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+    .opt-btn {
+      background: var(--card-inner); border: 2px solid var(--border); color: var(--text); padding: 0.85rem 1rem;
+      border-radius: 8px; font-size: 0.95rem; text-align: left; cursor: pointer; transition: all 0.2s;
     }
+    .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: #1a2744; }
+    .opt-btn.correct { background: rgba(34, 197, 94, 0.2) !important; border-color: var(--success) !important; }
+    .opt-btn.incorrect { background: rgba(239, 68, 68, 0.2) !important; border-color: var(--danger) !important; }
+
+    /* Matching Styles */
+    .matching-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    .matching-table th, .matching-table td { padding: 0.85rem; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
+    .matching-table select {
+      background: var(--card-inner); color: var(--text); border: 2px solid var(--border);
+      padding: 0.5rem; border-radius: 6px; font-size: 0.9rem; width: 100%;
+    }
+
+    /* Flashcard Styles */
+    .card-wrap { perspective: 1000px; min-height: 220px; cursor: pointer; }
+    .card-core {
+      position: relative; width: 100%; min-height: 220px; text-align: center;
+      transition: transform 0.4s ease; transform-style: preserve-3d;
+      border: 2px solid var(--border); border-radius: var(--radius);
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .card-core.flipped { transform: rotateY(180deg); border-color: var(--accent); }
+    .side { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 1.5rem; font-size: 1.15rem; }
+    .side.back { transform: rotateY(180deg); color: var(--text); }
+
+    /* Feedbacks & Controls */
+    .feedback-box { margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.45; display: none; }
     .feedback-box.show { display: block; }
     .feedback-box.pass { background: rgba(34, 197, 94, 0.15); border-left: 4px solid var(--success); }
     .feedback-box.fail { background: rgba(239, 68, 68, 0.15); border-left: 4px solid var(--danger); }
-
     .bottom-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
     .action-btn {
-      background: var(--accent); color: #0f172a; border: none; padding: 0.65rem 1.4rem;
+      background: var(--accent); color: #0b132b; border: none; padding: 0.65rem 1.4rem;
       font-weight: 700; border-radius: 8px; cursor: pointer;
     }
     .action-btn:hover { background: var(--accent-hover); }
 
-    /* Round Complete View */
+    /* Round Complete Modal */
     .round-complete { display: none; text-align: center; padding: 2rem 1rem; }
     .round-complete h2 { color: var(--accent); margin-bottom: 0.5rem; }
     .score-circle { font-size: 2.5rem; font-weight: 800; color: var(--success); margin: 1rem 0; }
-    .action-row { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
-    .btn-control {
-      padding: 0.85rem; border-radius: 8px; font-size: 1rem; font-weight: 700; border: none; cursor: pointer;
-    }
-    .btn-control.resume { background: var(--accent); color: #0f172a; }
-    .btn-control.reset { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
   </style>
 </head>
 <body>
   <main class="app-shell" role="main">
     <header>
-      <h1>HIST 1301 Chronology Arcade</h1>
-      <p>Unit 1 Timeline Mastery (Order Earliest to Latest)</p>
-      
-      <div class="mastery-bar-wrap" aria-label="Overall timeline challenge mastery progress">
-        <div class="mastery-bar-fill" id="masteryFill"></div>
-      </div>
-      <div class="mastery-stats">
-        <span id="masteredCount">Mastered: 0 / 15</span>
-        <span id="pctCount">0% Mastered</span>
-      </div>
+      <h1>HIST 1301 Study Arcade</h1>
+      <p>Unit 1 Interactive Mastery Hub</p>
     </header>
 
-    <!-- Ordering Question View -->
-    <div id="quizView" class="card">
-      <div class="card-top">
-        <span class="round-tag" id="qCounter">Challenge 1 of 5</span>
-        <span class="mastery-badge" id="challengeMasteryLevel">Mastery: 0/2</span>
-      </div>
-      
-      <p class="instructions" id="promptText">Arrange these events in chronological order (Earliest on top, Latest on bottom):</p>
-      
-      <ul class="timeline-list" id="timelineContainer" aria-label="Events list to order"></ul>
-      
-      <div class="feedback-box" id="feedbackBox" role="alert"></div>
-      
-      <div class="bottom-bar">
-        <button class="action-btn" id="checkBtn" onclick="checkChronology()">Submit Order</button>
-        <button class="action-btn" id="nextBtn" style="display: none;" onclick="nextChallenge()">Continue</button>
-      </div>
-    </div>
+    <!-- Top Mode Navigation -->
+    <nav class="arcade-tabs" role="tablist">
+      <button class="tab-btn" id="tab-chrono" role="tab" aria-selected="true" aria-controls="panel-chrono" onclick="switchMode('chrono')">Chronology Arcade</button>
+      <button class="tab-btn" id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" onclick="switchMode('quiz')">Mastery Quiz (100)</button>
+      <button class="tab-btn" id="tab-match" role="tab" aria-selected="false" aria-controls="panel-match" onclick="switchMode('match')">Matching Lab</button>
+      <button class="tab-btn" id="tab-cards" role="tab" aria-selected="false" aria-controls="panel-cards" onclick="switchMode('cards')">Flashcards</button>
+    </nav>
 
-    <!-- Round Complete View -->
-    <div id="roundCompleteView" class="card round-complete">
-      <h2>Round Finished!</h2>
-      <p style="color: var(--text-muted)">Here is your timeline precision score for this round:</p>
-      <div class="score-circle" id="roundScore">0/5</div>
-      <p id="roundMessage" style="font-size: 0.95rem;"></p>
-      
-      <div class="action-row">
-        <button class="btn-control resume" onclick="startNewRound()">Start Next Set</button>
-        <button class="btn-control reset" onclick="resetMastery()">Reset All Mastery Progress</button>
+    <!-- 1. CHRONOLOGY PANEL -->
+    <section id="panel-chrono" class="panel active" role="tabpanel" aria-labelledby="tab-chrono">
+      <div class="mastery-bar-wrap"><div class="mastery-bar-fill" id="chronoFill"></div></div>
+      <div class="mastery-stats">
+        <span id="chronoMasteredText">Mastered: 0 / 15</span>
+        <span id="chronoPctText">0% Mastered</span>
       </div>
-    </div>
+
+      <div id="chronoActiveCard" class="card">
+        <div class="card-top">
+          <span class="round-tag" id="chronoRoundTag">Challenge 1 of 5</span>
+          <span class="mastery-badge" id="chronoBadge">Mastery: 0/2</span>
+        </div>
+        <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1rem;" id="chronoPrompt"></p>
+        <ul class="timeline-list" id="chronoTimeline"></ul>
+        <div class="feedback-box" id="chronoFeedback" role="alert"></div>
+        <div class="bottom-bar">
+          <button class="action-btn" id="chronoSubmitBtn" onclick="checkChronology()">Submit Order</button>
+          <button class="action-btn" id="chronoNextBtn" style="display:none;" onclick="nextChronology()">Continue</button>
+        </div>
+      </div>
+
+      <div id="chronoCompleteCard" class="card round-complete">
+        <h2>Chronology Set Complete!</h2>
+        <div class="score-circle" id="chronoRoundScore">0/5</div>
+        <p id="chronoRoundMsg" style="margin-bottom: 1.25rem;"></p>
+        <button class="action-btn" onclick="startChronologyRound()">Start Next Set</button>
+      </div>
+    </section>
+
+    <!-- 2. MULTIPLE CHOICE QUIZ PANEL -->
+    <section id="panel-quiz" class="panel" role="tabpanel" aria-labelledby="tab-quiz">
+      <div class="mastery-bar-wrap"><div class="mastery-bar-fill" id="quizFill"></div></div>
+      <div class="mastery-stats">
+        <span id="quizMasteredText">Mastered: 0 / 100</span>
+        <span id="quizPctText">0% Mastered</span>
+      </div>
+
+      <div id="quizActiveCard" class="card">
+        <div class="card-top">
+          <span class="round-tag" id="quizRoundTag">Question 1 of 10</span>
+          <span class="mastery-badge" id="quizBadge">Mastery: 0/2</span>
+        </div>
+        <p class="question-prompt" id="quizPrompt"></p>
+        <div class="options-grid" id="quizOpts"></div>
+        <div class="feedback-box" id="quizFeedback" role="alert"></div>
+        <div class="bottom-bar" style="justify-content: flex-end;">
+          <button class="action-btn" id="quizNextBtn" style="display:none;" onclick="nextQuizQuestion()">Continue</button>
+        </div>
+      </div>
+
+      <div id="quizCompleteCard" class="card round-complete">
+        <h2>10-Question Round Complete!</h2>
+        <div class="score-circle" id="quizRoundScore">0/10</div>
+        <p id="quizRoundMsg" style="margin-bottom: 1.25rem;"></p>
+        <button class="action-btn" onclick="startQuizRound()">Start Next 10 Questions</button>
+      </div>
+    </section>
+
+    <!-- 3. MATCHING PANEL -->
+    <section id="panel-match" class="panel" role="tabpanel" aria-labelledby="tab-match">
+      <div class="card">
+        <h2 style="font-size:1.15rem; margin-bottom:0.75rem; color:var(--accent);">Puritan Ideals & Constitutional Matching</h2>
+        <table class="matching-table">
+          <thead><tr><th style="width:60%;">Description</th><th style="width:40%;">Term</th></tr></thead>
+          <tbody id="matchingBody"></tbody>
+        </table>
+        <div class="bottom-bar">
+          <button class="action-btn" onclick="gradeMatching()">Check Matches</button>
+          <span id="matchingScore" style="font-weight:700; font-size:0.95rem;"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FLASHCARDS PANEL -->
+    <section id="panel-cards" class="panel" role="tabpanel" aria-labelledby="tab-cards">
+      <div class="card">
+        <div class="card-top">
+          <span class="round-tag" id="cardCounter">Card 1 of 8</span>
+          <span style="font-size:0.85rem; color:var(--text-muted);">Tap to Flip</span>
+        </div>
+        <div class="card-wrap" onclick="toggleCard()" tabindex="0">
+          <div class="card-core" id="flashcardCore">
+            <div class="side front" id="cardFront">Front</div>
+            <div class="side back" id="cardBack">Back</div>
+          </div>
+        </div>
+        <div class="bottom-bar" style="margin-top:1.25rem;">
+          <button class="action-btn" onclick="navCard(-1)">Previous</button>
+          <button class="action-btn" onclick="toggleCard()">Flip</button>
+          <button class="action-btn" onclick="navCard(1)">Next</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script>
-    // 15 Chronology Challenges covering the major eras of Unit 1
+    /* ============================================================
+       DATA SECTION: TIMELINES, QUESTIONS, MATCHES, FLASHCARDS
+       ============================================================ */
     const timelineChallenges = [
       {
         id: 1,
@@ -150,7 +249,7 @@
           { text: "John Rolfe cultivates a cured, mild strain of West Indian tobacco", year: "1612" },
           { text: "Virginia Slave Codes legally institutionalize chattel slavery", year: "1705" }
         ],
-        rationale: "Roanoke preceded Jamestown (1607). The Starving Time struck during the winter of 1609–1610 before Rolfe began curing tobacco in 1612, with the Virginia Slave Codes enacted later in 1705."
+        rationale: "Roanoke preceded Jamestown (1607). The Starving Time struck during winter 1609–1610 before Rolfe began curing tobacco in 1612, with the Virginia Slave Codes codified later in 1705."
       },
       {
         id: 2,
@@ -184,7 +283,7 @@
           { text: "Pontiac's Rebellion erupts across the Great Lakes frontier", year: "1763 (May)" },
           { text: "King George III issues the Proclamation of 1763", year: "1763 (Oct)" }
         ],
-        rationale: "The war began in 1754, Pitt adopted his maritime strategy in 1757, the Peace of Paris was concluded in February 1763, sparking Pontiac's siege in May, which prompted the October 1763 boundary proclamation."
+        rationale: "The war began in 1754, Pitt adopted his maritime strategy in 1757, the Peace of Paris concluded in Feb 1763, sparking Pontiac's siege in May, which prompted the Oct 1763 Proclamation line."
       },
       {
         id: 5,
@@ -195,7 +294,7 @@
           { text: "Stamp Act Congress convenes in New York to coordinate non-importation", year: "1765 (Oct)" },
           { text: "Declaratory Act affirms Parliament's absolute authority to bind colonies", year: "1766" }
         ],
-        rationale: "The Sugar Act (1764) preceded the Stamp Act (spring 1765), which led to the Stamp Act Congress (fall 1765) and Parliament's 1766 Declaratory Act after repeal."
+        rationale: "The Sugar Act (1764) preceded the Stamp Act (spring 1765), which led to the Stamp Act Congress (fall 1765) and Parliament's 1766 Declaratory Act."
       },
       {
         id: 6,
@@ -207,7 +306,7 @@
           { text: "Boston Tea Party dumps East India Company tea chests into the harbor", year: "1773 (Dec)" },
           { text: "Intolerable (Coercive) Acts close Boston Harbor and suspend the charter", year: "1774" }
         ],
-        rationale: "The Townshend taxes (1767) set the stage for the Boston Massacre (1770), followed by the May 1773 Tea Act, the December 1773 Tea Party, and the 1774 punitive Intolerable Acts."
+        rationale: "Townshend duties (1767) set the stage for the Boston Massacre (1770), followed by the May 1773 Tea Act, the Dec 1773 Tea Party, and the 1774 Intolerable Acts."
       },
       {
         id: 7,
@@ -219,7 +318,7 @@
           { text: "Olive Branch Petition sent to King George III seeking reconciliation", year: "1775 (July)" },
           { text: "King George III issues the Proclamation of Rebellion", year: "1775 (Aug)" }
         ],
-        rationale: "Boycotts began in fall 1774 (Continental Congress & Edenton), hostilities erupted in April 1775, the Olive Branch Petition was dispatched in July, and the King declared the colonies in rebellion in August 1775."
+        rationale: "Boycotts began in fall 1774, hostilities erupted in April 1775, the Olive Branch Petition was dispatched in July, and the King declared colonies in rebellion in August 1775."
       },
       {
         id: 8,
@@ -230,7 +329,7 @@
           { text: "Second Continental Congress adopts the Declaration of Independence", year: "1776 (July)" },
           { text: "Surrender of British troops at the Battle of Saratoga", year: "1777" }
         ],
-        rationale: "Washington assumed command in 1775, Paine published Common Sense in January 1776, Independence was declared in July 1776, and the Saratoga turning point arrived in October 1777."
+        rationale: "Washington assumed command in 1775, Paine published Common Sense in Jan 1776, Independence was declared in July 1776, and Saratoga arrived in Oct 1777."
       },
       {
         id: 9,
@@ -286,7 +385,7 @@
           { text: "Slave Trade Compromise protects the transatlantic trade for twenty years", year: "1787 (Aug)" },
           { text: "Inclusion of the Supremacy Clause in Article VI", year: "1787 (Sept)" }
         ],
-        rationale: "The Northwest Ordinance banned slavery in mid-July 1787, alongside the Three-Fifths Compromise, followed by the August slave trade bargain and September Article VI drafting."
+        rationale: "The Northwest Ordinance banned slavery in mid-July 1787 alongside the Three-Fifths Compromise, followed by the August slave trade bargain and September Article VI drafting."
       },
       {
         id: 14,
@@ -312,246 +411,457 @@
       }
     ];
 
-    const STORAGE_KEY = 'HIST1301_ALICE_CHRONOLOGY_V1';
-    let masteryData = {};
+    const quizQuestions = [
+      { id: 1, q: "What was John Rolfe's primary economic contribution to the survival of the Jamestown colony?", opts: ["Discovering alluvial gold in Virginia rivers", "Introducing and cultivating a mild, cured strain of West Indian tobacco", "Constructing iron furnaces along the James River", "Signing the Mayflower Compact"], a: 1, exp: "Rolfe cultivated a milder West Indian tobacco that became Virginia's cash crop, providing the economic foundation the colony needed to survive." },
+      { id: 2, q: "Which 1620 foundational document established majority rule and self-governance for the Pilgrims?", opts: ["Virginia Charter", "Mayflower Compact", "Albany Plan of Union", "Fundamental Orders"], a: 1, exp: "The Mayflower Compact created a civil body politic based on majority rule before the Pilgrims disembarked at Plymouth." },
+      { id: 3, q: "What immediate shift in Virginia's labor market followed Bacon's Rebellion (1676)?", opts: ["Total emancipation of European indentured servants", "Planter elites decisively turned to lifelong African chattel slavery to prevent multi-racial laborer alliances", "A transition exclusively to indigenous servitude", "Abandonment of cash-crop tobacco agriculture"], a: 1, exp: "Bacon's Rebellion frightened elite planters with its coalition of landless white and black servants, speeding the transition to race-based chattel slavery." },
+      { id: 4, q: "Under mercantilism, what was the primary purpose of 'enumerated commodities'?", opts: ["They were exempt from customs duties", "They could only be legally shipped directly to Great Britain or British colonial ports", "They were banned from manufacture in the New World", "They were designated strictly for domestic Indian trade"], a: 1, exp: "Under the Navigation Acts, enumerated commodities (like tobacco and sugar) had to be delivered exclusively to Britain to secure an imperial trade monopoly." },
+      { id: 5, q: "Why did the British Crown issue the Proclamation of 1763 following the French and Indian War?", opts: ["To establish a new naval base in New Orleans", "To halt trans-Appalachian settlement to reduce conflicts with Native nations and imperial defense spending", "To enforce the Woolens Act across Massachusetts", "To grant western territories to France"], a: 1, exp: "Pontiac's Rebellion prompted Britain to bar settlers west of the Appalachian divide to avoid expensive frontier conflicts." },
+      { id: 6, q: "How did Parliament justify taxing the American colonies without seated colonial members?", opts: ["Direct Democracy", "Virtual Representation", "The Social Contract", "Separation of Powers"], a: 1, exp: "Parliament claimed that every MP represented the interests of all subjects across the empire, making seated geographic delegates unnecessary." },
+      { id: 7, q: "What was the direct diplomatic significance of the Continental victory at Saratoga (1777)?", opts: ["It forced George III to repeal the Tea Act", "It convinced France to officially forge a military alliance and commit troops/funds to America", "It brought an immediate end to the Revolutionary War", "It compelled Spain to cede Florida to Virginia"], a: 1, exp: "The capture of Burgoyne's army at Saratoga proved the Americans could win in the field, securing the formal Franco-American alliance." },
+      { id: 8, q: "Under the Articles of Confederation, which of the following was a power the national government lacked?", opts: ["Declaring war and signing treaties", "Surveying western territories", "Levying direct taxes and regulating interstate trade", "Running an imperial post office"], a: 2, exp: "The Confederation Congress could neither levy taxes directly nor regulate commerce, leaving it without a way to service national debt." },
+      { id: 9, q: "Roger Sherman's Great Compromise at the 1787 Constitutional Convention reconciled large and small states by:", opts: ["Creating a unicameral legislature based on taxable wealth", "Establishing a bicameral legislature with proportional representation in the House and equal state representation in the Senate", "Abolishing the Electoral College", "Allowing states to veto federal tariffs"], a: 1, exp: "The Connecticut Compromise balanced large-state population demands in the House with small-state equal power in the Senate." },
+      { id: 10, q: "Which core concept from John Locke's Social Contract directly shaped Thomas Jefferson's Declaration of Independence?", opts: ["The divine right of kings", "Legitimate government rests upon the consent of the governed to protect life, liberty, and property", "The necessity of lifetime executive rulers", "Complete state control over ecclesiastical institutions"], a: 1, exp: "Locke argued that people form governments to secure their natural rights; if power is abused, the contract is broken and citizens may alter it." },
+      { id: 11, q: "What mystery marks the historical record of the Roanoke Island colony (1586–1587)?", opts: ["Spanish privateers executed the colonists", "The settlement was found deserted with the word 'Croatoan' carved on a post", "A volcanic eruption buried the coastline", "The settlers joined the Jamestown settlement in 1607"], a: 1, exp: "Delayed relief ships returned in 1590 to find the colony deserted, with only the word 'Croatoan' carved into a wooden post." },
+      { id: 12, q: "What was John Smith’s primary leadership rule that saved Jamestown from collapse in 1608?", opts: ["'Gold for all who dig'", "'He that will not work shall not eat'", "'Peace through trade only'", "'Equal land for every servant'"], a: 1, exp: "John Smith imposed military discipline and the rule 'Don't work, don't eat' to force colonists to focus on shelter and food." },
+      { id: 13, q: "The brutal winter of 1609–1610 in Jamestown, where colonists were reduced to starvation and cannibalism, is known as:", opts: ["The Starving Time", "The Great Awakening", "The Salem Winter", "Bacon's Winter"], a: 0, exp: "During 'The Starving Time' in winter 1609–1610, food shortages killed the vast majority of Jamestown settlers." },
+      { id: 14, q: "Which Puritan ideal emphasized that economic thrift, hard work, and business success were signs of God's favor?", opts: ["Individualism", "Education", "Puritan Work Ethic", "Separation of Church and State"], a: 2, exp: "The Puritan Work Ethic treated hard work and thrift as a personal calling, viewing prosperity as evidence of God's grace." },
+      { id: 15, q: "Why did Puritans place such a heavy institutional emphasis on public education and literacy?", opts: ["To train naval navigators", "So that every individual could read and understand the Bible for their own salvation", "To prepare children for secular legal careers in England", "To eliminate the need for ordained ministers"], a: 1, exp: "Puritans prioritized literacy and schools so every believer could read and understand Scripture directly." },
+      { id: 16, q: "How did the religious outlook of Plymouth Separatists differ from Massachusetts Bay Puritans?", opts: ["Separatists broke completely from the Anglican Church, while Puritans sought to reform it from within as a 'City on a Hill'", "Separatists embraced Roman Catholicism", "Puritans rejected the Bible as the word of God", "Separatists believed in universal monarchical control"], a: 0, exp: "Separatists (Pilgrims) completely severed ties with the Church of England; Non-Separatists (Puritans) worked to reform it by example." },
+      { id: 17, q: "King Philip’s War (1675–1678) ended with what major regional outcome?", opts: ["Metacomet gained control of Boston", "Southern New England Native power was broken, paving the way for unchecked colonial expansion", "Puritans converted all remaining tribes to Anglicanism", "The English crown abandoned New England"], a: 1, exp: "Metacomet's death broke armed Native resistance in southern New England, opening the region to colonial expansion." },
+      { id: 18, q: "What was the purpose of the British Woolens Act of 1699?", opts: ["Encouraging wool manufacturing in the southern colonies", "Restricting the colonial manufacture and export of wool to protect English home industries", "Subsidizing textile imports from the Caribbean", "Mandating that continental soldiers wear linen uniforms"], a: 1, exp: "The Woolens Act barred colonial wool from inter-colonial or transatlantic export, safeguarding England's textile industry." },
+      { id: 19, q: "What was the British policy of 'Salutary Neglect' regarding the American colonies prior to 1763?", opts: ["Total military martial law across ports", "Relaxed enforcement of imperial trade laws as long as colonies remained profitable and loyal", "A total ban on colonial shipping to the West Indies", "Refusal to defend the colonies against France"], a: 1, exp: "Under Salutary Neglect, Britain rarely enforced strict trade acts, allowing the colonies to develop self-government and thrive on smuggling." },
+      { id: 20, q: "William Pitt the Elder turned the Seven Years' (French and Indian) War in Britain’s favor by:", opts: ["Concentrating resources, naval power, and troops in North America ('Blue Water Policy') while subsidizing allies in Europe", "Surrendering the Ohio Valley to avoid debt", "Relying purely on colonial militias without regular British troops", "Appointing George Washington commander-in-chief of all British naval forces"], a: 0, exp: "Pitt's 'Blue Water Policy' prioritized North American operations while using British subsidies to keep European allies fighting France." },
+      { id: 21, q: "What was the main purpose of British 'Writs of Assistance'?", opts: ["Providing housing stipends to royal governors", "Blanket, non-specific search warrants allowing customs agents to enter colonial premises looking for smuggled goods", "Authorizing privateers during the Seven Years' War", "Land grants in the Ohio Country"], a: 1, exp: "Writs of Assistance allowed royal customs officers to search ships and warehouses without detailing specific items or probable cause." },
+      { id: 22, q: "Why was the Stamp Act of 1765 so fiercely resisted compared to the earlier Sugar Act?", opts: ["It was an internal direct tax on domestic legal documents, newspapers, and playing cards levied without colonial legislative consent", "It taxed only wealthy plantation owners", "It doubled the tariff on imported Dutch rum", "It required paper to be printed in London only"], a: 0, exp: "The Stamp Act was Parliament's first direct internal tax, sparking resistance because colonies had no direct voice in Parliament." },
+      { id: 23, q: "What unified colonial action was taken to oppose the 1765 Stamp Act?", opts: ["The Constitutional Convention in Philadelphia", "The Stamp Act Congress, which coordinated petitions and non-importation agreements", "The signing of the Olive Branch Petition", "The drafting of the Articles of Confederation"], a: 1, exp: "Delegates met at the Stamp Act Congress in New York to issue declarations of rights and coordinate boycotts of British goods." },
+      { id: 24, q: "What did Parliament declare in the 1766 Declaratory Act after repealing the Stamp Act?", opts: ["Colonies could choose their own governors", "Parliament retained full authority to bind the colonies in laws 'in all cases whatsoever'", "All taxes on tea were abolished forever", "The Ohio Valley was open for unrestricted settlement"], a: 1, exp: "The Declaratory Act reaffirmed Parliament's total legislative authority over the American colonies in all cases whatsoever." },
+      { id: 25, q: "Who stepped forward to legally defend the British soldiers accused of murder in the 1770 Boston Massacre?", opts: ["Samuel Adams", "Thomas Jefferson", "John Adams", "Alexander Hamilton"], a: 2, exp: "John Adams defended Captain Preston and the soldiers to demonstrate that Massachusetts respected due process and the rule of law." },
+      { id: 26, q: "The Edenton Tea Party of 1774 was significant because it was:", opts: ["A raid led by the Sons of Liberty disguised as Mohawk warriors", "An organized boycott of British goods coordinated and signed by 51 North Carolina women", "The first naval battle of the American Revolution", "A secret meeting to author the Declaration of Independence"], a: 1, exp: "The Edenton Tea Party was a political action by women pledging non-consumption of British tea and textiles." },
+      { id: 27, q: "How did King George III respond to the Second Continental Congress’s 1775 Olive Branch Petition?", opts: ["He accepted it and recalled all British troops", "He refused to read it and issued the Proclamation of Rebellion, declaring the colonies in open treason", "He offered full colonial representation in Parliament", "He signed the Treaty of Paris"], a: 1, exp: "King George III rejected the petition and proclaimed the colonies to be in open, armed rebellion." },
+      { id: 28, q: "What role did Baron Friedrich von Steuben play for the Continental Army at Valley Forge?", opts: ["He supplied naval warships", "He drilled and trained soldiers into a disciplined force using a standardized manual", "He negotiated a loan with Spain", "He drafted the Northwest Ordinance"], a: 1, exp: "Von Steuben drilled the army, established camp sanitation, and taught standardized bayonet and tactical maneuvers." },
+      { id: 29, q: "Thomas Paine's 1776 pamphlet 'Common Sense' was effective because it:", opts: ["Used straightforward language to argue against hereditary monarchy and make the case for complete independence", "Promoted reconciliation with the King", "Was written in Latin for educated elites", "Argued against forming a national army"], a: 0, exp: "Paine used accessible, clear language to dismantle the idea of monarchy and urge ordinary Americans to choose independence." },
+      { id: 30, q: "George Washington's primary military strategy throughout the Revolutionary War was to:", opts: ["Defend every major coastal port at all costs", "Maintain a defensive war of attrition, keeping the Continental Army intact to outlast British political will", "Rely entirely on guerrilla tactics in the mountains", "Invade Canada to force a quick surrender"], a: 1, exp: "Washington knew that as long as the Continental Army survived in the field, the Revolution would continue." },
+      { id: 31, q: "The Land Ordinance of 1785 resolved western territorial disputes by:", opts: ["Allowing unrestricted squatter settlement", "Surveying land into six-mile-square townships and reserving Section 16 for public schools", "Banning all commercial farming in the Ohio Valley", "Ceding western lands directly to Virginia"], a: 1, exp: "The Land Ordinance of 1785 created a grid survey system and set aside Section 16 in every township to fund public education." },
+      { id: 32, q: "What was a major requirement established by the Northwest Ordinance of 1787 for territories seeking statehood?", opts: ["They had to allow chattel slavery", "Reaching a population of 60,000 free inhabitants to draft a constitution and enter on equal footing with original states", "Paying a territorial accession fee to Congress", "Operating under a unicameral assembly forever"], a: 1, exp: "The Northwest Ordinance created a statehood process at 60,000 free residents and barred slavery north of the Ohio River." },
+      { id: 33, q: "What caused the Rhode Island Currency Crisis under the Articles of Confederation?", opts: ["A complete shortage of paper money", "Printing depreciated paper money and forcing creditors to accept it at face value", "Gold bullion was seized by the federal army", "Heavy British import tariffs on local rum"], a: 1, exp: "Rhode Island printed unbacked paper money to discharge farm debts, punishing creditors who refused to accept it." },
+      { id: 34, q: "Shays’ Rebellion (1786–1787) in Massachusetts was sparked by:", opts: ["Anger over British tea tariffs", "Heavily indebted farmers facing foreclosures, high state taxes, and debtor's prison", "A desire to rejoin the British Empire", "Protests against the Northwest Ordinance"], a: 1, exp: "Daniel Shays led indebted farmers against court foreclosures and property seizures for unpaid state taxes." },
+      { id: 35, q: "What was the most important political consequence of Shays’ Rebellion?", opts: ["It proved the Articles of Confederation were functioning smoothly", "It exposed the national government's weakness, providing momentum to convene the Philadelphia Convention", "It convinced Massachusetts to abolish all taxes", "It triggered an immediate war with Spain"], a: 1, exp: "The uprising alarmed political leaders, showing the national government was too weak to protect order or property." },
+      { id: 36, q: "What was the purpose of the 1785 Mount Vernon Conference?", opts: ["Revising the Declaration of Independence", "Resolving commercial navigation disputes between Virginia and Maryland on the Potomac River", "Organizing the Continental Army", "Drafting the Bill of Rights"], a: 1, exp: "The meeting at George Washington's home resolved Potomac trade disputes and paved the way for the Annapolis Convention." },
+      { id: 37, q: "What did the 1786 Annapolis Convention accomplish despite its low turnout?", opts: ["It drafted the U.S. Constitution", "Alexander Hamilton successfully called on all states to meet in Philadelphia in 1787 to reform the government", "It repealed the Articles of Confederation", "It created the first national bank"], a: 1, exp: "Though only five states attended, Hamilton secured an agreement to convene all states at Philadelphia to revise the Articles." },
+      { id: 38, q: "James Madison's Virginia Plan favored large states by proposing:", opts: ["A unicameral legislature with one vote per state", "A bicameral legislature with representation in both houses based on population", "An executive chosen directly by state governors", "A system without a federal judicial branch"], a: 1, exp: "The Virginia Plan proposed a bicameral legislature with both houses apportioned by population, benefiting larger states." },
+      { id: 39, q: "William Paterson's New Jersey Plan proposed:", opts: ["A unicameral legislature where each state received equal voting power", "A national monarchy with lifetime appointments", "Proportional representation based on taxable property", "The complete abolition of state governments"], a: 0, exp: "The New Jersey Plan defended small states by keeping a unicameral legislature with one vote per state." },
+      { id: 40, q: "How did the Three-Fifths Compromise resolve disputes between northern and southern delegates?", opts: ["It freed three-fifths of all enslaved people by 1808", "It counted three-fifths of the enslaved population for both congressional representation and direct taxation", "It gave southern states three-fifths of the seats in the Senate", "It taxed southern cotton exports at three-fifths value"], a: 1, exp: "The compromise counted five enslaved persons as three free persons for determining House seats and direct taxes." },
+      { id: 41, q: "What was agreed to in the Slave Trade Compromise at the 1787 Constitutional Convention?", opts: ["Slavery was permanently outlawed across all territories", "Congress was barred from banning the transatlantic slave trade for 20 years (until 1808)", "The interstate slave trade was placed under immediate federal control", "Enslaved workers could not be counted in the census"], a: 1, exp: "Southern delegates protected their supply by preventing Congress from banning the transatlantic slave trade until 1808." },
+      { id: 42, q: "Why did the Framers create the Electoral College system?", opts: ["To give sitting senators sole authority to select the president", "To establish an indirect method balancing state weight and insulating the office from direct popular factionalism", "To ensure only governors could run for executive office", "To fulfill Anti-Federalist demands for yearly elections"], a: 1, exp: "The Electoral College balanced state power while creating a buffer between direct popular voting and executive selection." },
+      { id: 43, q: "What does the Supremacy Clause in Article VI of the U.S. Constitution establish?", opts: ["State laws override federal statutes", "The U.S. Constitution, federal laws, and national treaties are the supreme law of the land", "The president may nullify supreme court decisions", "State assemblies retain sovereign authority over federal treaties"], a: 1, exp: "Article VI states that the Constitution and federal laws override conflicting state laws." },
+      { id: 44, q: "What was the Anti-Federalists' primary argument against ratifying the 1787 Constitution?", opts: ["The national government was too weak to collect taxes", "The Constitution gave too much power to the national government and lacked a Bill of Rights to protect individual liberties", "The treaty with France was unconstitutional", "The capital was located too far south"], a: 1, exp: "Anti-Federalists feared centralized tyranny and opposed the Constitution because it initially lacked a Bill of Rights." },
+      { id: 45, q: "What was the primary purpose of the Federalist Papers written by Hamilton, Madison, and Jay?", opts: ["To negotiate peace with Great Britain", "To persuade voters, particularly in New York, to ratify the new Constitution", "To propose amendments returning power to the states", "To explain why the Articles of Confederation should be kept"], a: 1, exp: "The Federalist Papers explained how the Constitution would work and argued for its ratification in key states like New York." },
+      { id: 46, q: "Which protection is guaranteed under the First Amendment of the Bill of Rights?", opts: ["Right to keep and bear arms", "Freedoms of speech, religion, press, assembly, and petition", "Protection against double jeopardy", "No quartering of troops"], a: 1, exp: "The First Amendment protects the freedoms of speech, religion, the press, assembly, and petition." },
+      { id: 47, q: "What protection is established by the Fourth Amendment?", opts: ["Right to a speedy trial", "Protection against unreasonable searches and seizures without warrants supported by probable cause", "No excessive bail or cruel punishment", "Trial by jury in civil lawsuits"], a: 1, exp: "The Fourth Amendment requires warrants backed by probable cause and protects citizens from unreasonable searches." },
+      { id: 48, q: "The Fifth Amendment provides all of the following constitutional protections EXCEPT:", opts: ["Protection against double jeopardy", "Protection against self-incrimination", "Right to a speedy and public trial with a state-provided attorney", "Guarantee of due process of law"], a: 2, exp: "The right to a speedy public trial and defense counsel is guaranteed under the Sixth Amendment, not the Fifth." },
+      { id: 49, q: "What does the Tenth Amendment declare regarding government power?", opts: ["The federal government holds absolute sovereign authority", "Powers not delegated to the United States by the Constitution, nor prohibited by it to the states, are reserved to the states, or to the people", "States cannot maintain militias", "All civil trials must include twelve jurors"], a: 1, exp: "The Tenth Amendment limits the federal government by reserving non-delegated powers to the states or the people." },
+      { id: 50, q: "The Sugar Act of 1764 differed from earlier Molasses Acts because it was designed to:", opts: ["Encourage the smuggling of foreign molasses", "Actually collect revenue by lowering the duty on molasses and strictly enforcing prosecution in vice-admiralty courts", "Outlaw rum production in New England", "Subsidize French sugar plantations"], a: 1, exp: "The Sugar Act lowered the tax rate to deter smuggling, but enforced collections strictly through vice-admiralty courts." },
+      { id: 51, q: "What were the 'Three G's' that drove early European exploration and colonization of the Americas?", opts: ["Guns, Grain, and Government", "Gold, Glory, and God", "Growth, Geography, and Guilds", "Garrison, Goods, and Grace"], a: 1, exp: "Gold (wealth), Glory (national prestige), and God (religious conversion) drove European exploration." },
+      { id: 52, q: "What type of British colony was established and owned by an individual or family under a royal land grant?", opts: ["Charter colony", "Proprietary colony", "Royal colony", "Federal colony"], a: 1, exp: "Proprietary colonies (such as Maryland and Pennsylvania) were granted by the Crown to individuals or families to govern." },
+      { id: 53, q: "What type of British colony was governed under direct crown rule through a royally appointed governor?", opts: ["Proprietary colony", "Charter colony", "Royal colony", "Corporate colony"], a: 2, exp: "Royal colonies were governed directly by the English Crown through royally appointed governors." },
+      { id: 54, q: "What type of British colony was established by an explicit contract or joint-stock enterprise granted by the crown?", opts: ["Charter colony", "Proprietary colony", "Royal colony", "Parliamentary colony"], a: 0, exp: "Charter colonies operated under a formal charter granted by the Crown to a joint-stock company or group of settlers." },
+      { id: 55, q: "What was the Iroquois Confederacy (Haudenosaunee)?", opts: ["An alliance of Spanish missionaries", "A powerful confederacy of Five (later Six) northeastern Native nations with a unified council", "A confederacy formed by the Powhatan to oppose Jamestown", "A New England trading company"], a: 1, exp: "The Iroquois Confederacy united Six Nations across upstate New York, using diplomacy and trade to hold regional power." },
+      { id: 56, q: "What was the demographic consequence of European epidemic diseases (such as smallpox) on Native populations?", opts: ["Negligible impact due to existing immunities", "Loss of up to 90% of indigenous populations who lacked acquired immunities", "A rapid increase in indigenous fertility rates", "It affected only Caribbean island communities"], a: 1, exp: "Lacking immunity to Old World diseases like smallpox, Native populations saw catastrophic mortality rates up to 90%." },
+      { id: 57, q: "John Rolfe’s 1614 marriage to Pocahontas was politically significant because it:", opts: ["Ended the Starving Time immediately", "Created an era of diplomatic peace between the Powhatan Confederacy and Jamestown colonists", "Transferred royal English title directly to Powhatan", "Abolished the Virginia House of Burgesses"], a: 1, exp: "The marriage of Rolfe and Pocahontas brought an era of peace between the Powhatan and the English settlement." },
+      { id: 58, q: "Who was the royal governor of Virginia whose frontier policies helped spark Bacon's Rebellion?", opts: ["Nathaniel Bacon", "William Berkeley", "John Smith", "Thomas Gage"], a: 1, exp: "Governor William Berkeley refused to support frontier settlers against Native tribes, sparking Nathaniel Bacon's revolt." },
+      { id: 59, q: "What legal change was codified in the Virginia Slave Codes of 1705?", opts: ["Banning all imports of enslaved Africans", "Legally defining enslaved people as chattel property and making slave status inherited through the mother", "Offering manumission after seven years of labor", "Requiring equal wages for enslaved field workers"], a: 1, exp: "The 1705 codes cemented chattel slavery into law, stripping enslaved people of rights and making status hereditary." },
+      { id: 60, q: "Which group of English religious migrants wished to purify the Church of England from within rather than leave it?", opts: ["Separatists", "Puritans", "Quakers", "Catholics"], a: 1, exp: "Puritans sought to eliminate remaining Catholic practices from within the Church of England without separating entirely." },
+      { id: 61, q: "John Winthrop's sermon describing Massachusetts Bay as a 'City on a Hill' meant the colony should:", opts: ["Be built atop a physical mountain for military defense", "Serve as a pious, exemplary Christian community for England to emulate", "Remain secluded from all international trade", "Tolerate all Christian and non-Christian sects"], a: 1, exp: "Winthrop described the colony as a 'City on a Hill' to model a reformed Christian society for England and the world." },
+      { id: 62, q: "Which event is celebrated in American popular culture as the 'First Thanksgiving' (1621)?", opts: ["The landing of the Susan Constant at Jamestown", "A harvest celebration shared by Plymouth Pilgrims and the Wampanoag people", "The end of King Philip's War", "The signing of the Mayflower Compact"], a: 1, exp: "In autumn 1621, Plymouth settlers and the Wampanoag shared a three-day harvest gathering." },
+      { id: 63, q: "Did the Puritans of Massachusetts Bay practice open religious freedom for dissidents?", opts: ["Yes, they welcomed all theological viewpoints", "No, they enforced religious conformity and expelled religious dissenters (such as Roger Williams and Anne Hutchinson)", "Yes, they established total separation of church and state in 1630", "No, they only permitted Catholic mass"], a: 1, exp: "Puritans sought religious freedom for themselves, but tolerated no dissent, banishing reformers like Williams and Hutchinson." },
+      { id: 64, q: "What was the brutal sea journey across the Atlantic endured by enslaved Africans called?", opts: ["The Columbian Route", "The Middle Passage", "The Triangular Transit", "The Northwest Passage"], a: 1, exp: "The Middle Passage was the horrific second leg of the Triangular Trade, where millions of enslaved Africans were forced across the Atlantic." },
+      { id: 65, q: "In the Triangular Trade system, what was typically transported from the American colonies to Europe?", opts: ["Enslaved people and ivory", "Raw materials and cash crops like tobacco, sugar, and timber", "Manufactured firearms and textiles", "Spices from India"], a: 1, exp: "Colonial North America supplied raw commodities and cash crops to European markets." },
+      { id: 66, q: "What was the core goal of European mercantilist economic theory?", opts: ["Creating free international trade without tariffs", "Achieving national wealth and power through a favorable balance of trade and accumulating bullion (gold/silver)", "Abolishing colonial monopolies", "Eliminating merchant merchant vessels"], a: 1, exp: "Mercantilism argued that national strength rested on accumulating bullion through exports and exclusive colonial markets." },
+      { id: 67, q: "The French and Indian War (1754–1763) began over competing French and British claims to the:", opts: ["Hudson Bay coastline", "Ohio River Valley (Ohio Country)", "St. Lawrence River estuary", "Florida peninsula"], a: 1, exp: "Clashes over lucrative fur trade and land speculation in the upper Ohio River Valley ignited the French and Indian War." },
+      { id: 68, q: "What was the European theater of the French and Indian War known as historically?", opts: ["The War of the Spanish Succession", "The Seven Years' War", "The Thirty Years' War", "The War of Jenkins' Ear"], a: 1, exp: "The worldwide conflict between Britain and France (1756–1763) was called the Seven Years' War in Europe." },
+      { id: 69, q: "Under the Treaty of Paris (1763), what did France lose in North America?", opts: ["Only the island of Cuba", "Virtually all North American territory, ceding Canada and lands east of the Mississippi to Great Britain", "Control of the Caribbean sugar islands", "Only its fur trading outposts in Maine"], a: 1, exp: "The 1763 Treaty of Paris expelled French power from mainland North America, transferring Canada and eastern lands to Britain." },
+      { id: 70, q: "Why did the British government decide to tax the American colonists after 1763?", opts: ["To pay for royal weddings in London", "To help pay off massive imperial debt from the French and Indian War and fund colonial defense", "To punish colonists for staying neutral in the war", "To fund Spanish naval expeditions"], a: 1, exp: "Britain's national debt doubled during the war, leading Parliament to expect the colonies to help cover defense expenses." },
+      { id: 71, q: "What was the patriotic slogan adopted by colonists protesting parliamentary revenue acts?", opts: ["'Give me liberty or give me cash'", "'No taxation without representation'", "'One nation under God'", "'Don't tread on Parliament'"], a: 1, exp: "Colonists argued that paying taxes levied by a Parliament without colonial members violated their rights as Englishmen." },
+      { id: 72, q: "What organization formed in Boston in 1765 to actively coordinate resistance and enforce boycotts against British taxes?", opts: ["The Continental Congress", "The Sons of Liberty", "The House of Burgesses", "The Society of Friends"], a: 1, exp: "The Sons of Liberty organized public protests, enforced non-importation pacts, and resisted British tax policies." },
+      { id: 73, q: "The Townshend Acts of 1767 placed external import taxes on which items?", opts: ["Slaves and raw timber", "Glass, lead, paint, paper, and tea", "Tobacco and indigo only", "Rum and sugar only"], a: 1, exp: "The Townshend duties taxed common imported goods including glass, lead, paint, paper, and tea." },
+      { id: 74, q: "Why did Parliament pass the Tea Act of 1773?", opts: ["To ban all tea drinking across Massachusetts", "To bail out the struggling British East India Company by granting it a monopoly to sell tea directly to the colonies", "To raise duties on tea to unaffordable levels", "To force colonists to purchase Dutch teas"], a: 1, exp: "The Tea Act granted the British East India Company a monopoly to sell tea directly, undercutting local colonial merchants." },
+      { id: 75, q: "How did colonists in Boston protest the Tea Act on December 16, 1773?", opts: ["Burning down the Governor's mansion", "Dumping 342 chests of British East India Company tea into Boston Harbor (Boston Tea Party)", "Arresting British customs officials at gunpoint", "Signing a trade alliance with France"], a: 1, exp: "Disguised Sons of Liberty boarded ships and destroyed 342 chests of East India Company tea in Boston Harbor." },
+      { id: 76, q: "How did Parliament respond to the Boston Tea Party in 1774?", opts: ["Repealing all taxes immediately", "Passing the Coercive (Intolerable) Acts, which closed Boston Harbor and suspended colonial self-government", "Withdrawing British naval ships from America", "Abolishing the royal governorship of Massachusetts"], a: 1, exp: "The Coercive Acts closed Boston Harbor, quartered troops in town, and revoked the Massachusetts charter." },
+      { id: 77, q: "What was the main action taken by the First Continental Congress in the fall of 1774?", opts: ["Declaring immediate national independence", "Creating the Continental Association to enforce a total commercial boycott of British goods", "Electing George Washington president of the United States", "Authoring the U.S. Constitution"], a: 1, exp: "The First Continental Congress organized the Continental Association to enforce non-importation and non-consumption of British goods." },
+      { id: 78, q: "Where were the first military shots of the American Revolutionary War fired in April 1775?", opts: ["Bunker Hill", "Lexington and Concord", "Saratoga", "Valley Forge"], a: 1, exp: "Fighting began on April 19, 1775, when British troops clashed with Massachusetts militiamen at Lexington and Concord." },
+      { id: 79, q: "Who did the Second Continental Congress appoint as Commander-in-Chief of the Continental Army in 1775?", opts: ["Horatio Gates", "George Washington", "Nathaniel Bacon", "Alexander Hamilton"], a: 1, exp: "Congress selected George Washington of Virginia to build and lead a unified Continental Army." },
+      { id: 80, q: "What role did the Marquis de Lafayette play in the American Revolutionary War?", opts: ["He served as the royal governor of Canada", "He was a young French nobleman who served as a major general, helped secure French aid, and commanded troops", "He drafted the peace terms for the Treaty of Paris", "He funded the British navy"], a: 1, exp: "Lafayette volunteered his service, became a trusted general under Washington, and helped secure French military assistance." },
+      { id: 81, q: "Who was the primary author of the Declaration of Independence in 1776?", opts: ["John Adams", "Thomas Jefferson", "Benjamin Franklin", "James Madison"], a: 1, exp: "Thomas Jefferson drafted the Declaration of Independence on behalf of the Committee of Five." },
+      { id: 82, q: "Which phrase from the Declaration of Independence captures the ideal of natural equality?", opts: ["'Don’t Work, Don’t Eat'", "'All men are created equal'", "'United States are'", "'Order and good government'"], a: 1, exp: "Jefferson wrote the foundational ideal that 'all men are created equal' with unalienable rights." },
+      { id: 83, q: "During the Revolutionary War, colonists who remained loyal to the British Crown were called:", opts: ["Patriots", "Loyalists (or Tories)", "Federalists", "Whigs"], a: 1, exp: "Colonists loyal to the Crown were known as Loyalists or Tories, opposing the Patriot independence movement." },
+      { id: 84, q: "What were the recognized borders of the United States under the Treaty of Paris (1783)?", opts: ["From the Atlantic coast west to the Mississippi River, and from Canada down to Florida", "Only the original thirteen coastal colonies", "From the Atlantic ocean to the Pacific ocean", "All of North America including Canada"], a: 0, exp: "The 1783 Treaty of Paris set the Mississippi River as the western boundary and the Great Lakes as the northern boundary." },
+      { id: 85, q: "How many branches of government existed under the national Articles of Confederation?", opts: ["Three (Executive, Legislative, Judicial)", "One (a unicameral Legislative branch)", "Two (Executive and Legislative)", "Four branches"], a: 1, exp: "The Articles created only a unicameral legislative body, lacking an independent executive or national judiciary." },
+      { id: 86, q: "How many votes did each state receive in the Confederation Congress under the Articles of Confederation?", opts: ["Based on white male population", "One vote per state, regardless of size or population", "Two votes for small states, four for large states", "Votes were determined by tax contributions"], a: 1, exp: "Each state held one vote in the Confederation Congress, ensuring equal state power regardless of size." },
+      { id: 87, q: "To amend or alter the Articles of Confederation, how many states had to agree?", opts: ["A simple majority of 7 out of 13", "A supermajority of 9 out of 13", "Unanimous approval of all 13 states", "Three-fourths of the states"], a: 2, exp: "Amending the Articles required unanimous consent from all 13 states, making necessary reforms nearly impossible." },
+      { id: 88, q: "Why did the Articles of Confederation describe the nation as a 'firm league of friendship'?", opts: ["States wanted to abolish state borders", "Individual states retained their sovereignty, freedom, and independence", "To create an all-powerful national monarchy", "To unite with France permanently"], a: 1, exp: "The Articles prioritized state sovereignty, keeping the national government weak and decentralized." },
+      { id: 89, q: "What was the phrase commonly used before the Constitution that reflected state supremacy over national unity?", opts: ["'The United States is'", "'The United States are'", "'One nation indivisible'", "'Federal sovereignty'"], a: 1, exp: "Referring to 'the United States are' highlighted that the country was viewed as a collection of separate states rather than a single nation." },
+      { id: 90, q: "What was the stated, official purpose of the Philadelphia Convention when delegates met in May 1787?", opts: ["To crown George Washington king", "To revise and amend the Articles of Confederation", "To declare war on Great Britain again", "To negotiate trade pacts with Spain"], a: 1, exp: "Delegates initially convened to revise the Articles of Confederation, but quickly decided to draft a new Constitution." },
+      { id: 91, q: "Who is known as the 'Father of the Constitution' for taking detailed notes and designing the Virginia Plan?", opts: ["Alexander Hamilton", "James Madison", "Benjamin Franklin", "John Jay"], a: 1, exp: "James Madison earned this title by outlining the Virginia Plan and keeping detailed daily records of the convention." },
+      { id: 92, q: "In the U.S. Constitution, which house of Congress features equal representation (two seats per state)?", opts: ["The House of Representatives", "The Senate", "The Electoral College", "The Supreme Court"], a: 1, exp: "Under the Great Compromise, the Senate provides two senators per state regardless of population." },
+      { id: 93, q: "In the U.S. Constitution, which house of Congress features proportional representation based on population?", opts: ["The Senate", "The House of Representatives", "The Cabinet", "The Confederation Board"], a: 1, exp: "The House of Representatives allocates seats proportionally to each state based on population." },
+      { id: 94, q: "What constitutional system prevents any single branch of the federal government from becoming too powerful?", opts: ["Checks and Balances and Separation of Powers", "Salutary Neglect", "Virtual Representation", "Unicameral Supremacy"], a: 0, exp: "Separation of powers and checks and balances give each branch distinct duties and the ability to limit the other branches." },
+      { id: 95, q: "Under the original Constitution, how were United States Senators chosen before the 17th Amendment?", opts: ["By direct popular vote of citizens", "By individual state legislatures", "By the President of the United States", "By the House of Representatives"], a: 1, exp: "Originally, state legislatures elected U.S. Senators to ensure state governments retained leverage over federal law." },
+      { id: 96, q: "What primary promise convinced reluctant states (such as Virginia and New York) to ratify the Constitution?", opts: ["Moving the national capital to Boston", "The immediate addition of a Bill of Rights to protect individual and state liberties", "Eliminating all federal excise taxes", "Abolishing the Senate"], a: 1, exp: "Federalists secured ratification by pledging to add a Bill of Rights during the First Congress." },
+      { id: 97, q: "Which amendment protects citizens from being forced to quarter soldiers in private homes during peacetime?", opts: ["First Amendment", "Third Amendment", "Fifth Amendment", "Seventh Amendment"], a: 1, exp: "The Third Amendment prohibits housing troops in private homes without the owner's consent during peacetime." },
+      { id: 98, q: "What right is explicitly guaranteed by the Sixth Amendment?", opts: ["Freedom of assembly", "Right to a speedy, public trial by an impartial jury and assistance of counsel for defense", "Protection from cruel and unusual punishment", "Right to bear arms"], a: 1, exp: "The Sixth Amendment guarantees the right to a speedy, public trial, an impartial jury, and defense counsel." },
+      { id: 99, q: "What is the primary function of the Seventh Amendment?", opts: ["Guaranteeing trial by jury in common-law civil lawsuits involving monetary disputes", "Abolishing state taxes", "Establishing presidential term limits", "Protecting against double jeopardy"], a: 0, exp: "The Seventh Amendment preserves the right to a jury trial in civil lawsuits exceeding twenty dollars." },
+      { id: 100, q: "What protection is established by the Eighth Amendment?", opts: ["Freedom of the press", "Protection against excessive bail, excessive fines, and cruel and unusual punishments", "Right to confront witnesses", "Reservation of non-delegated powers to the states"], a: 1, exp: "The Eighth Amendment bars excessive bail, unreasonable fines, and cruel and unusual punishments." }
+    ];
 
-    function loadMastery() {
+    const matchingItems = [
+      { desc: "Salvation is based on your own grace/merit; all saved are equal in God's eye.", correct: "Individualism" },
+      { desc: "Each believer must read Scripture directly, making literacy and study necessary for salvation.", correct: "Education" },
+      { desc: "Work hard, be thrifty, prosper for God; success reflects salvation, poverty signals damnation.", correct: "Puritan Work Ethic" },
+      { desc: "1785 conference hosted by Washington resolving navigation disputes on the Potomac River.", correct: "Mount Vernon Conference" },
+      { desc: "1786 interstate meeting leading Hamilton to call for a broader Philadelphia convention.", correct: "Annapolis Convention" },
+      { desc: "Madison's proposal for three branches and a bicameral legislature apportioned by population.", correct: "Virginia Plan" },
+      { desc: "Paterson's small-state plan retaining a unicameral Congress with equal votes per state.", correct: "New Jersey Plan" }
+    ];
+
+    const flashcards = [
+      { term: "Iroquois Confederacy", def: "Powerful northeastern confederacy of 5 (later 6) Native nations that balanced rival European powers through trade and diplomacy." },
+      { term: "Mayflower Compact (1620)", def: "The first covenant of self-governance in New England, binding Pilgrims to majority-rule civil order." },
+      { term: "Bacon's Rebellion (1676)", def: "Frontier Virginia revolt that prompted planter elites to accelerate the shift to racial chattel slavery." },
+      { term: "Writs of Assistance", def: "Blanket, non-specific British search warrants allowing customs officers to search ships and warehouses for smuggled goods." },
+      { term: "Land Ordinance of 1785", def: "A law surveying western territory into 6-mile townships, setting aside Section 16 for public schools." },
+      { term: "Northwest Ordinance (1787)", def: "Established a 60,000-person path to equal statehood and permanently barred slavery north of the Ohio River." },
+      { term: "Supremacy Clause (Art. VI)", def: "Dictates that the Constitution, federal statutes, and national treaties are the supreme law of the land." },
+      { term: "Tenth Amendment", def: "Reserves all non-delegated powers to the individual states, or to the people." }
+    ];
+
+    /* ============================================================
+       STATE & LOCAL STORAGE LOGIC
+       ============================================================ */
+    const STORAGE_KEY = 'HIST1301_ALICE_FULL_ARCADE';
+    let arcadeData = { chrono: {}, quiz: {} };
+
+    function loadStore() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-          const parsed = JSON.parse(saved);
-          timelineChallenges.forEach(c => {
-            masteryData[c.id] = typeof parsed[c.id] === 'number' ? parsed[c.id] : 0;
-          });
-        } else {
-          timelineChallenges.forEach(c => { masteryData[c.id] = 0; });
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(masteryData));
+          arcadeData = JSON.parse(saved);
         }
-      } catch (err) {
-        timelineChallenges.forEach(c => { if (typeof masteryData[c.id] !== 'number') masteryData[c.id] = 0; });
+      } catch (e) {
+        console.warn("Storage restricted", e);
       }
-      updateMasteryUI();
+      if (!arcadeData.chrono) arcadeData.chrono = {};
+      if (!arcadeData.quiz) arcadeData.quiz = {};
+
+      timelineChallenges.forEach(c => { if (typeof arcadeData.chrono[c.id] !== 'number') arcadeData.chrono[c.id] = 0; });
+      quizQuestions.forEach(q => { if (typeof arcadeData.quiz[q.id] !== 'number') arcadeData.quiz[q.id] = 0; });
+      updateAllProgressBars();
     }
 
-    function saveMastery() {
+    function saveStore() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(masteryData));
-      } catch (err) {}
-      updateMasteryUI();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arcadeData));
+      } catch (e) {}
+      updateAllProgressBars();
     }
 
-    function updateMasteryUI() {
-      let masteredCount = 0;
-      timelineChallenges.forEach(c => {
-        if ((masteryData[c.id] || 0) >= 2) masteredCount++;
+    function updateAllProgressBars() {
+      // Chrono
+      let cMaster = 0;
+      timelineChallenges.forEach(c => { if ((arcadeData.chrono[c.id] || 0) >= 2) cMaster++; });
+      const cPct = Math.round((cMaster / timelineChallenges.length) * 100);
+      document.getElementById('chronoFill').style.width = `${cPct}%`;
+      document.getElementById('chronoMasteredText').textContent = `Mastered: ${cMaster} / ${timelineChallenges.length}`;
+      document.getElementById('chronoPctText').textContent = `${cPct}% Mastered`;
+
+      // Quiz
+      let qMaster = 0;
+      quizQuestions.forEach(q => { if ((arcadeData.quiz[q.id] || 0) >= 2) qMaster++; });
+      const qPct = Math.round((qMaster / quizQuestions.length) * 100);
+      document.getElementById('quizFill').style.width = `${qPct}%`;
+      document.getElementById('quizMasteredText').textContent = `Mastered: ${qMaster} / ${quizQuestions.length}`;
+      document.getElementById('quizPctText').textContent = `${qPct}% Mastered`;
+    }
+
+    function switchMode(mode) {
+      ['chrono', 'quiz', 'match', 'cards'].forEach(m => {
+        document.getElementById(`panel-${m}`).classList.remove('active');
+        document.getElementById(`tab-${m}`).setAttribute('aria-selected', 'false');
       });
-      const pct = Math.round((masteredCount / timelineChallenges.length) * 100);
-      document.getElementById('masteryFill').style.width = `${pct}%`;
-      document.getElementById('masteredCount').textContent = `Mastered: ${masteredCount} / ${timelineChallenges.length}`;
-      document.getElementById('pctCount').textContent = `${pct}% Mastered`;
+      document.getElementById(`panel-${mode}`).classList.add('active');
+      document.getElementById(`tab-${mode}`).setAttribute('aria-selected', 'true');
     }
 
-    function resetMastery() {
-      if (confirm("Reset all chronology mastery progress back to 0%?")) {
-        timelineChallenges.forEach(c => { masteryData[c.id] = 0; });
-        saveMastery();
-        startNewRound();
-      }
-    }
+    /* ============================================================
+       MODULE 1: CHRONOLOGY ARCADE
+       ============================================================ */
+    let cPool = [], cIdx = 0, cCorrect = 0, activeTimelineItems = [];
 
-    let activeRoundPool = [];
-    let currentRoundIndex = 0;
-    let roundCorrectCount = 0;
-    let activeItems = [];
-
-    function startNewRound() {
+    function startChronologyRound() {
       const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
-      const unmastered = timelineChallenges.filter(c => (masteryData[c.id] || 0) < 2);
-
+      const unmastered = timelineChallenges.filter(c => (arcadeData.chrono[c.id] || 0) < 2);
       if (unmastered.length >= 5) {
-        activeRoundPool = shuffle(unmastered).slice(0, 5);
+        cPool = shuffle(unmastered).slice(0, 5);
       } else if (unmastered.length > 0) {
-        const remainder = timelineChallenges.filter(c => (masteryData[c.id] || 0) >= 2);
-        activeRoundPool = shuffle(unmastered).concat(shuffle(remainder).slice(0, 5 - unmastered.length));
+        const rem = timelineChallenges.filter(c => (arcadeData.chrono[c.id] || 0) >= 2);
+        cPool = shuffle(unmastered).concat(shuffle(rem).slice(0, 5 - unmastered.length));
       } else {
-        activeRoundPool = shuffle(timelineChallenges).slice(0, 5);
+        cPool = shuffle(timelineChallenges).slice(0, 5);
       }
 
-      currentRoundIndex = 0;
-      roundCorrectCount = 0;
-      document.getElementById('quizView').style.display = 'block';
-      document.getElementById('roundCompleteView').style.display = 'none';
-      renderChallenge();
+      cIdx = 0; cCorrect = 0;
+      document.getElementById('chronoActiveCard').style.display = 'block';
+      document.getElementById('chronoCompleteCard').style.display = 'none';
+      renderChronologyChallenge();
     }
 
-    function renderChallenge() {
-      const challenge = activeRoundPool[currentRoundIndex];
-      const level = masteryData[challenge.id] || 0;
+    function renderChronologyChallenge() {
+      const ch = cPool[cIdx];
+      const lvl = arcadeData.chrono[ch.id] || 0;
+      document.getElementById('chronoRoundTag').textContent = `Challenge ${cIdx + 1} of 5`;
+      document.getElementById('chronoBadge').textContent = `Mastery: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
+      document.getElementById('chronoPrompt').textContent = `Order these events chronologically from earliest (top) to latest (bottom) — [${ch.title}]:`;
 
-      document.getElementById('qCounter').textContent = `Challenge ${currentRoundIndex + 1} of 5`;
-      document.getElementById('challengeMasteryLevel').textContent = `Mastery: ${level}/2 ${level >= 2 ? '★' : ''}`;
-      document.getElementById('promptText').textContent = `Order these events chronologically from earliest (top) to latest (bottom) — [${challenge.title}]:`;
+      activeTimelineItems = ch.events.map((e, i) => ({ ...e, orig: i })).sort(() => Math.random() - 0.5);
+      document.getElementById('chronoFeedback').className = 'feedback-box';
+      document.getElementById('chronoFeedback').textContent = '';
+      document.getElementById('chronoSubmitBtn').style.display = 'inline-block';
+      document.getElementById('chronoNextBtn').style.display = 'none';
 
-      // Copy and randomize event items
-      activeItems = challenge.events.map((e, idx) => ({ ...e, originalIndex: idx }));
-      activeItems.sort(() => Math.random() - 0.5);
-
-      const feedback = document.getElementById('feedbackBox');
-      feedback.className = 'feedback-box';
-      feedback.textContent = '';
-
-      document.getElementById('checkBtn').style.display = 'inline-block';
-      document.getElementById('checkBtn').disabled = false;
-      document.getElementById('nextBtn').style.display = 'none';
-
-      drawItems(false);
+      drawChronologyItems(false);
     }
 
-    function drawItems(isLocked) {
-      const container = document.getElementById('timelineContainer');
-      container.innerHTML = '';
-
-      activeItems.forEach((item, index) => {
+    function drawChronologyItems(isLocked) {
+      const ul = document.getElementById('chronoTimeline');
+      ul.innerHTML = '';
+      activeTimelineItems.forEach((item, idx) => {
         const li = document.createElement('li');
         li.className = 'timeline-item';
-        li.id = `item-${index}`;
+        li.id = `titem-${idx}`;
 
         const content = document.createElement('div');
         content.className = 'item-content';
-
-        const pos = document.createElement('span');
-        pos.className = 'pos-index';
-        pos.textContent = `${index + 1}.`;
-
-        const label = document.createElement('span');
-        label.className = 'event-label';
-        label.textContent = item.text;
-
-        const year = document.createElement('span');
-        year.className = 'year-tag';
-        year.id = `year-${index}`;
-        year.textContent = `(${item.year})`;
-
-        content.appendChild(pos);
-        content.appendChild(label);
-        content.appendChild(year);
+        content.innerHTML = `<span class="pos-index">${idx + 1}.</span> <span class="event-label">${item.text}</span> <span class="year-tag" id="tyear-${idx}">(${item.year})</span>`;
         li.appendChild(content);
 
         const btnGroup = document.createElement('div');
         btnGroup.className = 'btn-shift-group';
-
-        const upBtn = document.createElement('button');
-        upBtn.className = 'btn-shift';
-        upBtn.innerHTML = '▲';
-        upBtn.setAttribute('aria-label', `Move item ${index + 1} up`);
-        upBtn.disabled = isLocked || index === 0;
-        upBtn.onclick = () => moveItem(index, -1);
-
-        const downBtn = document.createElement('button');
-        downBtn.className = 'btn-shift';
-        downBtn.innerHTML = '▼';
-        downBtn.setAttribute('aria-label', `Move item ${index + 1} down`);
-        downBtn.disabled = isLocked || index === activeItems.length - 1;
-        downBtn.onclick = () => moveItem(index, 1);
-
-        btnGroup.appendChild(upBtn);
-        btnGroup.appendChild(downBtn);
+        btnGroup.innerHTML = `
+          <button class="btn-shift" onclick="shiftChronology(${idx}, -1)" ${isLocked || idx === 0 ? 'disabled' : ''}>▲</button>
+          <button class="btn-shift" onclick="shiftChronology(${idx}, 1)" ${isLocked || idx === activeTimelineItems.length - 1 ? 'disabled' : ''}>▼</button>
+        `;
         li.appendChild(btnGroup);
-
-        container.appendChild(li);
+        ul.appendChild(li);
       });
     }
 
-    function moveItem(index, direction) {
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= activeItems.length) return;
-
-      const temp = activeItems[index];
-      activeItems[index] = activeItems[targetIndex];
-      activeItems[targetIndex] = temp;
-
-      drawItems(false);
+    function shiftChronology(index, dir) {
+      const target = index + dir;
+      if (target < 0 || target >= activeTimelineItems.length) return;
+      const tmp = activeTimelineItems[index];
+      activeTimelineItems[index] = activeTimelineItems[target];
+      activeTimelineItems[target] = tmp;
+      drawChronologyItems(false);
     }
 
     function checkChronology() {
-      const challenge = activeRoundPool[currentRoundIndex];
-      let isAllCorrect = true;
+      const ch = cPool[cIdx];
+      let perfect = true;
 
-      activeItems.forEach((item, currentPos) => {
-        const elem = document.getElementById(`item-${currentPos}`);
-        const yearTag = document.getElementById(`year-${currentPos}`);
-        yearTag.classList.add('revealed');
-
-        if (item.originalIndex === currentPos) {
-          elem.classList.add('correct');
+      activeTimelineItems.forEach((item, i) => {
+        const el = document.getElementById(`titem-${i}`);
+        document.getElementById(`tyear-${i}`).classList.add('revealed');
+        if (item.orig === i) {
+          el.classList.add('correct');
         } else {
-          elem.classList.add('incorrect');
-          isAllCorrect = false;
+          el.classList.add('incorrect');
+          perfect = false;
         }
       });
 
-      drawItems(true); // Redraw with shift controls disabled
-
-      // Reveal year badges on all items after submission
-      activeItems.forEach((_, i) => {
-        const yt = document.getElementById(`year-${i}`);
-        if (yt) yt.classList.add('revealed');
+      drawChronologyItems(true);
+      activeTimelineItems.forEach((_, i) => {
+        const y = document.getElementById(`tyear-${i}`);
+        if (y) y.classList.add('revealed');
       });
 
-      const feedback = document.getElementById('feedbackBox');
-      const checkBtn = document.getElementById('checkBtn');
-      const nextBtn = document.getElementById('nextBtn');
+      const fb = document.getElementById('chronoFeedback');
+      document.getElementById('chronoSubmitBtn').style.display = 'none';
+      document.getElementById('chronoNextBtn').style.display = 'inline-block';
 
-      checkBtn.style.display = 'none';
-      nextBtn.style.display = 'inline-block';
-      nextBtn.focus();
-
-      if (isAllCorrect) {
-        roundCorrectCount++;
-        feedback.className = 'feedback-box show pass';
-        feedback.innerHTML = `<strong>✓ Chronologically Perfect!</strong> ${challenge.rationale}`;
-        if (!masteryData[challenge.id]) masteryData[challenge.id] = 0;
-        if (masteryData[challenge.id] < 2) masteryData[challenge.id]++;
+      if (perfect) {
+        cCorrect++;
+        fb.className = 'feedback-box show pass';
+        fb.innerHTML = `<strong>✓ Chronologically Perfect!</strong> ${ch.rationale}`;
+        if (!arcadeData.chrono[ch.id]) arcadeData.chrono[ch.id] = 0;
+        if (arcadeData.chrono[ch.id] < 2) arcadeData.chrono[ch.id]++;
       } else {
-        feedback.className = 'feedback-box show fail';
-        feedback.innerHTML = `<strong>✗ Out of Sequence.</strong> Check the revealed dates above. ${challenge.rationale}`;
-        masteryData[challenge.id] = 0;
+        fb.className = 'feedback-box show fail';
+        fb.innerHTML = `<strong>✗ Out of Sequence.</strong> Check the revealed dates above. ${ch.rationale}`;
+        arcadeData.chrono[ch.id] = 0;
       }
-
-      saveMastery();
+      saveStore();
     }
 
-    function nextChallenge() {
-      currentRoundIndex++;
-      if (currentRoundIndex < 5) {
-        renderChallenge();
-      } else {
-        finishRound();
+    function nextChronology() {
+      cIdx++;
+      if (cIdx < 5) renderChronologyChallenge();
+      else {
+        document.getElementById('chronoActiveCard').style.display = 'none';
+        document.getElementById('chronoCompleteCard').style.display = 'block';
+        document.getElementById('chronoRoundScore').textContent = `${cCorrect} / 5`;
+        document.getElementById('chronoRoundMsg').textContent = cCorrect >= 4 ? "Impressive sequence work!" : "Keep practicing; timeline logic takes repetition.";
       }
     }
 
-    function finishRound() {
-      document.getElementById('quizView').style.display = 'none';
-      const completeView = document.getElementById('roundCompleteView');
-      completeView.style.display = 'block';
+    /* ============================================================
+       MODULE 2: MASTERY QUIZ (100 POOL, 10 PER ROUND)
+       ============================================================ */
+    let qPool = [], qIdx = 0, qCorrect = 0;
 
-      document.getElementById('roundScore').textContent = `${roundCorrectCount} / 5`;
-
-      const msg = document.getElementById('roundMessage');
-      if (roundCorrectCount === 5) {
-        msg.textContent = "Outstanding timeline mastery! Every era was placed in proper historical sequence.";
-        msg.style.color = "var(--success)";
-      } else if (roundCorrectCount >= 3) {
-        msg.textContent = "Good run. Out-of-order sequences will stay in your active practice loop.";
-        msg.style.color = "var(--accent)";
+    function startQuizRound() {
+      const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
+      const unmastered = quizQuestions.filter(q => (arcadeData.quiz[q.id] || 0) < 2);
+      if (unmastered.length >= 10) {
+        qPool = shuffle(unmastered).slice(0, 10);
+      } else if (unmastered.length > 0) {
+        const rem = quizQuestions.filter(q => (arcadeData.quiz[q.id] || 0) >= 2);
+        qPool = shuffle(unmastered).concat(shuffle(rem).slice(0, 10 - unmastered.length));
       } else {
-        msg.textContent = "Timeline connections take practice. Keep working the shifts to master sequence.";
-        msg.style.color = "var(--warning)";
+        qPool = shuffle(quizQuestions).slice(0, 10);
+      }
+
+      qIdx = 0; qCorrect = 0;
+      document.getElementById('quizActiveCard').style.display = 'block';
+      document.getElementById('quizCompleteCard').style.display = 'none';
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const q = qPool[qIdx];
+      const lvl = arcadeData.quiz[q.id] || 0;
+      document.getElementById('quizRoundTag').textContent = `Question ${qIdx + 1} of 10`;
+      document.getElementById('quizBadge').textContent = `Mastery: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
+      document.getElementById('quizPrompt').textContent = q.q;
+
+      const opts = document.getElementById('quizOpts');
+      opts.innerHTML = '';
+      document.getElementById('quizFeedback').className = 'feedback-box';
+      document.getElementById('quizFeedback').textContent = '';
+      document.getElementById('quizNextBtn').style.display = 'none';
+
+      q.opts.forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
+        btn.onclick = () => handleQuizPick(i, btn);
+        opts.appendChild(btn);
+      });
+    }
+
+    function handleQuizPick(picked, clickedBtn) {
+      const q = qPool[qIdx];
+      const buttons = document.querySelectorAll('.opt-btn');
+      const fb = document.getElementById('quizFeedback');
+      buttons.forEach(b => b.disabled = true);
+
+      if (picked === q.a) {
+        clickedBtn.classList.add('correct');
+        fb.className = 'feedback-box show pass';
+        fb.innerHTML = `<strong>✓ Correct!</strong> ${q.exp}`;
+        qCorrect++;
+        if (!arcadeData.quiz[q.id]) arcadeData.quiz[q.id] = 0;
+        if (arcadeData.quiz[q.id] < 2) arcadeData.quiz[q.id]++;
+      } else {
+        clickedBtn.classList.add('incorrect');
+        buttons[q.a].classList.add('correct');
+        fb.className = 'feedback-box show fail';
+        fb.innerHTML = `<strong>✗ Incorrect.</strong> ${q.exp}`;
+        arcadeData.quiz[q.id] = 0;
+      }
+      saveStore();
+      document.getElementById('quizNextBtn').style.display = 'inline-block';
+    }
+
+    function nextQuizQuestion() {
+      qIdx++;
+      if (qIdx < 10) renderQuizQuestion();
+      else {
+        document.getElementById('quizActiveCard').style.display = 'none';
+        document.getElementById('quizCompleteCard').style.display = 'block';
+        document.getElementById('quizRoundScore').textContent = `${qCorrect} / 10`;
+        document.getElementById('quizRoundMsg').textContent = qCorrect >= 8 ? "Solid work! You're locking these facts in." : "Review the ones you missed in upcoming rounds.";
       }
     }
 
-    loadMastery();
-    startNewRound();
+    /* ============================================================
+       MODULE 3: MATCHING LAB
+       ============================================================ */
+    function buildMatching() {
+      const tbody = document.getElementById('matchingBody');
+      tbody.innerHTML = '';
+      const choices = [
+        "-- Select Match --", "Individualism", "Education", "Puritan Work Ethic",
+        "Mount Vernon Conference", "Annapolis Convention", "Virginia Plan", "New Jersey Plan"
+      ];
+
+      matchingItems.forEach((item, i) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.desc}</td>
+          <td>
+            <select id="matchSel-${i}">
+              ${choices.map(c => `<option value="${c}">${c}</option>`).join('')}
+            </select>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function gradeMatching() {
+      let score = 0;
+      matchingItems.forEach((item, i) => {
+        const sel = document.getElementById(`matchSel-${i}`);
+        if (sel.value === item.correct) {
+          sel.style.borderColor = 'var(--success)';
+          score++;
+        } else {
+          sel.style.borderColor = 'var(--danger)';
+        }
+      });
+      document.getElementById('matchingScore').textContent = `Score: ${score} / ${matchingItems.length}`;
+    }
+
+    /* ============================================================
+       MODULE 4: FLASHCARDS
+       ============================================================ */
+    let cardIdx = 0;
+    function renderFlashcard() {
+      const c = flashcards[cardIdx];
+      document.getElementById('cardCounter').textContent = `Card ${cardIdx + 1} of ${flashcards.length}`;
+      document.getElementById('cardFront').textContent = c.term;
+      document.getElementById('cardBack').textContent = c.def;
+      document.getElementById('flashcardCore').classList.remove('flipped');
+    }
+
+    function toggleCard() {
+      document.getElementById('flashcardCore').classList.toggle('flipped');
+    }
+
+    function navCard(dir) {
+      cardIdx = (cardIdx + dir + flashcards.length) % flashcards.length;
+      renderFlashcard();
+    }
+
+    /* ============================================================
+       INITIALIZATION
+       ============================================================ */
+    loadStore();
+    startChronologyRound();
+    startQuizRound();
+    buildMatching();
+    renderFlashcard();
   </script>
 </body>
 </html>
