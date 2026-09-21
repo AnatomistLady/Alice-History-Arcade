@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HIST 1301 Unit 1 Study Arcade</title>
+  <title>HIST 1301 Study Arcade | Unit 1</title>
   <style>
     :root {
       --bg: #0b132b;
@@ -41,16 +41,16 @@
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* Cards & Shared UI */
+    /* Cards & UI */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .round-tag { background: #0f172a; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border); }
     .mastery-badge { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
 
     /* Progress bar */
-    .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 14px; overflow: hidden; margin: 0.5rem 0; border: 1px solid var(--border); }
+    .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 16px; overflow: hidden; margin: 0.5rem 0; border: 1px solid var(--border); }
     .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.4s ease; }
-    .mastery-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 1rem; }
+    .mastery-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 1rem; }
 
     /* Chronology List Styles */
     .timeline-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; list-style: none; }
@@ -236,7 +236,7 @@
 
   <script>
     /* ============================================================
-       DATA: TIMELINE CHALLENGES (15 ERA CHALLENGES)
+       DATA: TIMELINE CHALLENGES (15)
        ============================================================ */
     const timelineChallenges = [
       {
@@ -415,7 +415,7 @@
     ];
 
     /* ============================================================
-       DATA: 100 QUESTION POOL (TOMASELLI CURATED)
+       DATA: 100 QUESTION POOL
        ============================================================ */
     const quizQuestions = [
       { id: "q1", q: "What was John Rolfe's primary economic contribution to Jamestown (1301.1c)?", opts: ["Discovering gold in the James River", "Introducing and cultivating a mild, cured strain of West Indian tobacco", "Constructing iron mills", "Drafting the Mayflower Compact"], a: 1, exp: "Rolfe cultivated a mild West Indian tobacco that became Virginia's cash crop, providing the economic salvation Jamestown required." },
@@ -552,9 +552,9 @@
     ];
 
     /* ============================================================
-       PERSISTENT STORAGE & MASTERY SYSTEM
+       FIXED PERSISTENT STORAGE & REACTIVE PROGRESS BAR
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_FINAL_MASTER_V4';
+    const STORAGE_KEY = 'HIST1301_ALICE_DYNAMIC_V5';
     let arcadeData = { chrono: {}, quiz: {} };
 
     function loadStore() {
@@ -584,24 +584,40 @@
     function saveStore() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(arcadeData));
-      } catch (err) {}
+      } catch (err) {
+        console.warn("Save failed", err);
+      }
       updateAllProgressBars();
     }
 
     function updateAllProgressBars() {
+      // 1. Chronology calculations
       let cMaster = 0;
-      timelineChallenges.forEach(c => { if ((arcadeData.chrono[c.id] || 0) >= 2) cMaster++; });
+      timelineChallenges.forEach(c => {
+        if ((arcadeData.chrono[c.id] || 0) >= 2) cMaster++;
+      });
       const cPct = Math.round((cMaster / timelineChallenges.length) * 100);
-      document.getElementById('chronoFill').style.width = `${cPct}%`;
-      document.getElementById('chronoMasteredText').textContent = `Mastered: ${cMaster} / ${timelineChallenges.length}`;
-      document.getElementById('chronoPctText').textContent = `${cPct}% Mastered`;
+      const cFill = document.getElementById('chronoFill');
+      const cTxt = document.getElementById('chronoMasteredText');
+      const cPctTxt = document.getElementById('chronoPctText');
 
+      if (cFill) cFill.style.width = `${cPct}%`;
+      if (cTxt) cTxt.textContent = `Mastered: ${cMaster} / ${timelineChallenges.length}`;
+      if (cPctTxt) cPctTxt.textContent = `${cPct}% Mastered`;
+
+      // 2. Quiz calculations
       let qMaster = 0;
-      quizQuestions.forEach(q => { if ((arcadeData.quiz[q.id] || 0) >= 2) qMaster++; });
+      quizQuestions.forEach(q => {
+        if ((arcadeData.quiz[q.id] || 0) >= 2) qMaster++;
+      });
       const qPct = Math.round((qMaster / quizQuestions.length) * 100);
-      document.getElementById('quizFill').style.width = `${qPct}%`;
-      document.getElementById('quizMasteredText').textContent = `Mastered: ${qMaster} / ${quizQuestions.length}`;
-      document.getElementById('quizPctText').textContent = `${qPct}% Mastered`;
+      const qFill = document.getElementById('quizFill');
+      const qTxt = document.getElementById('quizMasteredText');
+      const qPctTxt = document.getElementById('quizPctText');
+
+      if (qFill) qFill.style.width = `${qPct}%`;
+      if (qTxt) qTxt.textContent = `Mastered: ${qMaster} / ${quizQuestions.length}`;
+      if (qPctTxt) qPctTxt.textContent = `${qPct}% Mastered`;
     }
 
     function switchMode(mode) {
@@ -611,6 +627,7 @@
       });
       document.getElementById(`panel-${mode}`).classList.add('active');
       document.getElementById(`tab-${mode}`).setAttribute('aria-selected', 'true');
+      updateAllProgressBars();
     }
 
     /* ============================================================
@@ -651,6 +668,7 @@
       document.getElementById('chronoNextBtn').style.display = 'none';
 
       drawChronologyItems(false);
+      updateAllProgressBars();
     }
 
     function drawChronologyItems(isLocked) {
@@ -780,6 +798,8 @@
         btn.onclick = () => handleQuizPick(i, btn);
         opts.appendChild(btn);
       });
+
+      updateAllProgressBars();
     }
 
     function handleQuizPick(picked, clickedBtn) {
@@ -802,6 +822,12 @@
         fb.innerHTML = `<strong>✗ Incorrect.</strong> ${q.exp}`;
         arcadeData.quiz[q.id] = 0;
       }
+
+      // Update the badge on the active card immediately
+      const newLvl = arcadeData.quiz[q.id] || 0;
+      document.getElementById('quizBadge').textContent = `Mastery: ${newLvl}/2 ${newLvl >= 2 ? '★' : ''}`;
+
+      // Save and reactively update the top progress bar on every single tap
       saveStore();
       document.getElementById('quizNextBtn').style.display = 'inline-block';
     }
@@ -879,7 +905,7 @@
     }
 
     /* ============================================================
-       INITIALIZATION
+       INITIALIZATION CALLS
        ============================================================ */
     loadStore();
     startChronologyRound();
