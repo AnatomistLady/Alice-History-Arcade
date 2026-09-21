@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HIST 1301 Unit 1 Master Study Engine</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-hover: #334155;
+      --border: #475569;
+      --text: #f8fafc;
+      --text-dim: #cbd5e1;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --focus: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container { width: 100%; max-width: 900px; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.35rem; }
+    header p { color: var(--text-dim); }
+
+    .tabs { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab-btn {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+      padding: 0.6rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { background-color: var(--card-hover); }
+    .tab-btn[aria-selected="true"] {
+      background-color: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+    .tab-btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .panel {
+      display: none;
+      background: var(--card-bg);
+      padding: 1.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .panel.active { display: block; }
+
+    /* Quiz styling */
+    .counter { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .q-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .opts { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .opt-btn {
+      text-align: left;
+      padding: 0.9rem 1rem;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .opt-btn:hover:not(:disabled) { background-color: var(--card-hover); }
+    .opt-btn.correct { background: rgba(34, 197, 94, 0.2); border-color: var(--success); }
+    .opt-btn.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+
+    .feedback {
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .feedback.visible { display: block; }
+    .feedback.correct-f { background: rgba(34, 197, 94, 0.15); border-left: 4px solid var(--success); }
+    .feedback.incorrect-f { background: rgba(239, 68, 68, 0.15); border-left: 4px solid var(--danger); }
+
+    .controls { display: flex; justify-content: space-between; align-items: center; }
+    .action-btn {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      padding: 0.55rem 1.15rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .action-btn:hover { background: var(--accent-hover); color: white; }
+    .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Flashcards */
+    .card-wrap { perspective: 1000px; min-height: 230px; cursor: pointer; }
+    .card-core {
+      position: relative;
+      width: 100%;
+      min-height: 230px;
+      text-align: center;
+      transition: transform 0.4s ease;
+      transform-style: preserve-3d;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: #162032;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card-core.flipped { transform: rotateY(180deg); border-color: var(--accent); }
+    .side {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      font-size: 1.15rem;
+    }
+    .side.back { transform: rotateY(180deg); color: var(--text); }
+
+    /* Matching module */
+    .matching-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+    .matching-table th, .matching-table td {
+      padding: 0.85rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .matching-table select {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+      padding: 0.45rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>HIST 1301 Unit 1 Master Study Engine</h1>
+      <p>Exam Preparation: Pre-Columbian to the Constitutional Era</p>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn" id="btn-quiz" role="tab" aria-selected="true" aria-controls="panel-quiz" onclick="selectTab('quiz')">Multiple Choice (20)</button>
+      <button class="tab-btn" id="btn-matching" role="tab" aria-selected="false" aria-controls="panel-matching" onclick="selectTab('matching')">Matching Lab</button>
+      <button class="tab-btn" id="btn-cards" role="tab" aria-selected="false" aria-controls="panel-cards" onclick="selectTab('cards')">Key Flashcards</button>
+    </nav>
+
+    <!-- Quiz Panel -->
+    <section id="panel-quiz" class="panel active" role="tabpanel" aria-labelledby="btn-quiz">
+      <p class="counter" id="quiz-count">Question 1 of 20</p>
+      <h2 class="q-title" id="quiz-q">Question Text</h2>
+      <div class="opts" id="quiz-options"></div>
+      <div id="quiz-feed" class="feedback" role="alert"></div>
+      <div class="controls">
+        <button class="action-btn" id="prev-btn" onclick="navQuiz(-1)">Previous</button>
+        <button class="action-btn" id="next-btn" onclick="navQuiz(1)">Next</button>
+      </div>
+    </section>
+
+    <!-- Matching Panel -->
+    <section id="panel-matching" class="panel" role="tabpanel" aria-labelledby="btn-matching">
+      <h2 class="q-title">Section 2: Puritan Ideals Matching</h2>
+      <table class="matching-table">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 55%;">Description</th>
+            <th scope="col" style="width: 45%;">Puritan Ideal</th>
+          </tr>
+        </thead>
+        <tbody id="matching-body"></tbody>
+      </table>
+      <div class="controls">
+        <button class="action-btn" onclick="gradeMatching()">Check Matching Answers</button>
+        <p id="matching-score" class="counter" style="margin:0; font-size:1rem; font-weight:600;"></p>
+      </div>
+    </section>
+
+    <!-- Flashcards Panel -->
+    <section id="panel-cards" class="panel" role="tabpanel" aria-labelledby="btn-cards">
+      <p class="counter" id="card-count">Card 1 of 6</p>
+      <div class="card-wrap" onclick="toggleCard()" onkeydown="handleCardKey(event)" tabindex="0" role="button" aria-label="Flashcard. Press space or enter to flip.">
+        <div class="card-core" id="card-inner">
+          <div class="side front" id="card-front">Front</div>
+          <div class="side back" id="card-back">Back</div>
+        </div>
+      </div>
+      <div class="controls" style="margin-top: 1.25rem;">
+        <button class="action-btn" onclick="navCard(-1)">Previous</button>
+        <button class="action-btn" onclick="toggleCard()">Flip</button>
+        <button class="action-btn" onclick="navCard(1)">Next</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const examQuestions = [
+      {
+        q: "What was the central diplomatic significance of the Battle of Saratoga (October 1777)?",
+        opts: [
+          "It prompted Spain to abandon the Mississippi Valley.",
+          "It proved American military viability, convincing France to form a formal military alliance with the United States.",
+          "It caused King George III to sign the Olive Branch Petition.",
+          "It forced General Cornwallis to surrender at Yorktown immediately."
+        ],
+        ans: 1,
+        exp: "Gates and Arnold's victory at Saratoga proved the Continental Army could capture a British field force, bringing France openly into the war."
+      },
+      {
+        q: "What mystery marks the historical record of the Roanoke Island colony (1586–1587)?",
+        opts: [
+          "Settlers were captured and taken to Madrid by the Spanish fleet.",
+          "Settlers abandoned the site, leaving only the word 'Croatoan' carved on a post when relief ships returned.",
+          "The entire settlement was submerged by a storm tide.",
+          "The population was absorbed directly into Jamestown in 1607."
+        ],
+        ans: 1,
+        exp: "John White returned in 1590 to find the colony deserted with 'Croatoan' carved into a wooden post."
+      },
+      {
+        q: "How did John Smith stabilize the Jamestown colony after the initial 1607 settlement phase?",
+        opts: [
+          "By allocating free land plots to every arriving laborer.",
+          "By implementing a disciplined 'Don’t Work, Don’t Eat' martial work order.",
+          "By cultivating West Indian tobacco in freshwater marshes.",
+          "By securing colonial representation inside Parliament."
+        ],
+        ans: 1,
+        exp: "Smith imposed strict military work rules to compel gentlemen colonists to build fortifications and raise crops."
+      },
+      {
+        q: "What was the long-term regional outcome of King Philip’s War (1675–1678)?",
+        opts: [
+          "Puritans were permanently expelled from Massachusetts.",
+          "Metacomet formed a permanent confederacy governing New England.",
+          "Indigenous power in southern New England was broken, solidifying colonial dominance and eroding Puritan administrative authority.",
+          "The French Crown assumed military control of Plymouth Colony."
+        ],
+        ans: 2,
+        exp: "The defeat of Metacomet crushed armed Native resistance in southern New England and prompted tighter royal oversight from England."
+      },
+      {
+        q: "Under British mercantile policy, the Woolens Act of 1699 was passed to:",
+        opts: [
+          "Prohibit colonial production and export of wool to protect England’s home textile industry.",
+          "Subsidize Massachusetts textile mills with crown revenue.",
+          "Mandate that all imperial naval uniforms be manufactured in Virginia.",
+          "Abolish the Navigation Acts for clothing shipments."
+        ],
+        ans: 0,
+        exp: "The Woolens Act prevented the colonies from exporting woolens across borders, preserving the domestic English textile monopoly."
+      },
+      {
+        q: "William Pitt the Elder altered the outcome of the French and Indian War by:",
+        opts: [
+          "Evacuating all colonial military posts west of the Allegheny Mountains.",
+          "Focusing Britain’s resources, navy, and elite troops directly on North America ('Blue Water Policy') while financing European allies.",
+          "Appointing George Washington supreme commander of the Royal Navy.",
+          "Repealing all customs duties on sugar and molasses."
+        ],
+        ans: 1,
+        exp: "Pitt committed imperial funds to North American operations while using naval blockades to cut French supply lines."
+      },
+      {
+        q: "Pontiac’s Rebellion (1763–1768) led the British Crown to issue which policy?",
+        opts: [
+          "The Proclamation of 1763, barring colonial settlement west of the Appalachian Mountains.",
+          "The Quartering Act of 1774 closing western land courts.",
+          "The complete evacuation of Fort Pitt and Detroit.",
+          "A total repeal of all mercantilist Navigation Acts."
+        ],
+        ans: 0,
+        exp: "To prevent ongoing clashes between frontier settlers and Native nations, Britain barred migration beyond the Appalachian ridge."
+      },
+      {
+        q: "Why did American colonists resist the Stamp Act (1765) more aggressively than earlier trade duties?",
+        opts: [
+          "It raised duties exclusively on imported French rum.",
+          "It was an internal direct tax levied on everyday legal documents without the approval of colonial assemblies.",
+          "It was applied solely to merchant ports in New England.",
+          "It eliminated the colonial postal routes."
+        ],
+        ans: 1,
+        exp: "The Stamp Act was Parliament’s first direct internal tax on domestic commerce, igniting the cry 'No taxation without representation.'"
+      },
+      {
+        q: "What doctrine did Parliament advance to counter colonial complaints about lack of representation?",
+        opts: [
+          "Virtual Representation, arguing Members of Parliament represented the interests of all British subjects everywhere.",
+          "Direct Popular Apportionment.",
+          "Federal Supremacy.",
+          "Territorial Dual Sovereignty."
+        ],
+        ans: 0,
+        exp: "Parliament maintained that every MP represented the entire British empire, negating the need for colonial geographic representation."
+      },
+      {
+        q: "Why did John Adams defend the British soldiers charged after the Boston Massacre (1770)?",
+        opts: [
+          "He was an outspoken Loyalist officer.",
+          "To demonstrate that Massachusetts upheld the rule of law, legal due process, and the right to counsel.",
+          "To secure appointment to the British Board of Trade.",
+          "He had been appointed royal attorney by King George III."
+        ],
+        ans: 1,
+        exp: "Adams took the defense to establish that the colonial cause respected legal due process and the rule of law."
+      },
+      {
+        q: "The Edenton Tea Party of October 1774 was notable because it was:",
+        opts: [
+          "A raid conducted by Sons of Liberty disguised as Mohawk warriors.",
+          "One of the earliest coordinated political protests organized by women, who signed a boycott against British goods.",
+          "A legal petition drafted by the Stamp Act Congress.",
+          "A military assault against royal supply ships in the Chesapeake."
+        ],
+        ans: 1,
+        exp: "Fifty-one women in Edenton, NC, signed an agreement to boycott English imports in solidarity with continental resistance."
+      },
+      {
+        q: "King George III responded to the Continental Congress’s 1775 Olive Branch Petition by:",
+        opts: [
+          "Agreeing to seat colonial delegates in Parliament.",
+          "Rejecting the petition and issuing the Proclamation of Rebellion, declaring the colonies in open treason.",
+          "Withdrawing all British regiments from Boston.",
+          "Appointing Benjamin Franklin to his administrative cabinet."
+        ],
+        ans: 1,
+        exp: "King George III refused to inspect the petition and declared the colonies in open rebellion, hiring foreign mercenaries to suppress them."
+      },
+      {
+        q: "Which European officer played a pivotal role drilling the Continental Army into a disciplined force at Valley Forge?",
+        opts: [
+          "Baron Friedrich von Steuben.",
+          "Marquis de Lafayette.",
+          "General Thomas Gage.",
+          "Admiral de Grasse."
+        ],
+        ans: 0,
+        exp: "Von Steuben instituted standard drill, uniform commands, sanitation protocols, and bayonet instruction across the Continental ranks."
+      },
+      {
+        q: "Thomas Paine's pamphlet Common Sense (1776) transformed public opinion by:",
+        opts: [
+          "Advocating an aristocratic system for American governance.",
+          "Denouncing hereditary monarchy in accessible language and making a straightforward argument for complete independence.",
+          "Lobbying for reconciliation under an expanded Stamp Act.",
+          "Advising the immediate disbanding of the Continental Army."
+        ],
+        ans: 1,
+        exp: "Paine used straightforward, direct language to dismantle the idea of monarchy and persuade ordinary colonists to support independence."
+      },
+      {
+        q: "George Washington's primary strategic objective during the Revolutionary War was to:",
+        opts: [
+          "Defend every major coastal port at all costs.",
+          "Preserve the Continental Army, wage a war of attrition, and wear down British resources and political will.",
+          "Defeat the Royal Navy in open-ocean fleet engagements.",
+          "Confine military engagements to the southern backcountry."
+        ],
+        ans: 1,
+        exp: "Washington used a defensive war of attrition, knowing that as long as his army remained intact, the Revolution endured."
+      },
+      {
+        q: "The Rhode Island Currency Crisis under the Articles of Confederation was caused by:",
+        opts: [
+          "The state printing depreciated paper currency and forcing creditors to accept it at face value.",
+          "A total ban on paper money that crippled commerce.",
+          "Federal seizures of gold bullion from Providence banks.",
+          "Prohibitive tariffs passed by Great Britain on Rhode Island rum."
+        ],
+        ans: 0,
+        exp: "Rhode Island printed vast sums of paper money to discharge farm debts and legally compelled creditors to take it, highlighting the need for federal currency controls."
+      },
+      {
+        q: "Roger Sherman’s Great Compromise at the 1787 Philadelphia Convention resolved the representation debate by establishing:",
+        opts: [
+          "A unicameral legislature apportioned purely by taxable wealth.",
+          "A bicameral legislature with a proportional House of Representatives and an equal-representation Senate.",
+          "A direct popular presidential election without electors.",
+          "The total abolition of state-level court systems."
+        ],
+        ans: 1,
+        exp: "Sherman synthesized the Virginia and New Jersey Plans into a two-house legislature balancing population with state parity."
+      },
+      {
+        q: "The Electoral College was designed by the Framers primarily to:",
+        opts: [
+          "Give sitting senators exclusive authority over presidential appointments.",
+          "Create an indirect selection system that balanced federal and state power while filtering direct factional populism.",
+          "Ensure only state governors could vote for chief executives.",
+          "Fulfill Anti-federalist demands for yearly rotations in office."
+        ],
+        ans: 1,
+        exp: "The Electoral College was built to balance small and large states while insulating the presidency from unchecked popular swings."
+      },
+      {
+        q: "The Supremacy Clause in Article VI of the U.S. Constitution stipulates that:",
+        opts: [
+          "State supreme courts can nullify federal commercial statutes.",
+          "The federal Constitution, treaties, and federal laws are the supreme law of the land, overriding conflicting state laws.",
+          "The executive branch retains supremacy over all judicial rulings.",
+          "The Articles of Confederation remain active alongside the new Constitution."
+        ],
+        ans: 1,
+        exp: "Article VI ensures that federal constitutional authority supersedes conflicting state-level statutes or constitutions."
+      },
+      {
+        q: "The Federalist Papers were written by Alexander Hamilton, James Madison, and John Jay to:",
+        opts: [
+          "Encourage ratification of the 1787 Constitution, particularly in New York.",
+          "Propose revisions returning power to the Articles of Confederation.",
+          "Draft the text of the Northwest Ordinance.",
+          "Protest the adoption of the Bill of Rights."
+        ],
+        ans: 0,
+        exp: "The essays explained the operational mechanics of the Constitution and made the case for ratification to the public."
+      }
+    ];
+
+    const matchingData = [
+      {
+        desc: "Salvation based on your own grace and merit, not those around you; all who are saved are 'equal' in God's eyes.",
+        correct: "Individualism"
+      },
+      {
+        desc: "Each person should be able to read and understand the Bible for themselves, making literacy and study necessary for salvation.",
+        correct: "Education"
+      },
+      {
+        desc: "Find your calling, work hard, be thrifty, and prosper for God; success reflected salvation, while poverty signaled damnation.",
+        correct: "Puritan Work Ethic"
+      }
+    ];
+
+    const flashcards = [
+      { term: "Iroquois Confederacy (1500–1780)", def: "A powerful northeastern alliance of Five (later Six) Nations that balanced European rivals through trade and diplomacy." },
+      { term: "Mayflower Compact (1620)", def: "The first self-governing compact established in New England, binding Pilgrims to majority-rule governance." },
+      { term: "Bacon's Rebellion (1675–1677)", def: "A Virginia uprising of frontier settlers and servants that led planter elites to transition toward lifelong racial chattel slavery." },
+      { term: "Writs of Assistance", def: "Blanket British search warrants allowing customs officers to search ships and warehouses for smuggled goods." },
+      { term: "Land Ordinance of 1785", def: "A law that surveyed western lands into six-mile-square townships and reserved Section 16 for public schools." },
+      { term: "Tenth Amendment", def: "Reserves all powers not delegated to the federal government nor prohibited by the Constitution to the states, or to the people." }
+    ];
+
+    let currentQ = 0;
+    let currentCard = 0;
+
+    function selectTab(tab) {
+      ['quiz', 'matching', 'cards'].forEach(t => {
+        document.getElementById(`panel-${t}`).classList.remove('active');
+        document.getElementById(`btn-${t}`).setAttribute('aria-selected', 'false');
+      });
+      document.getElementById(`panel-${tab}`).classList.add('active');
+      document.getElementById(`btn-${tab}`).setAttribute('aria-selected', 'true');
+    }
+
+    function renderQuiz() {
+      const q = examQuestions[currentQ];
+      document.getElementById('quiz-count').textContent = `Question ${currentQ + 1} of ${examQuestions.length}`;
+      document.getElementById('quiz-q').textContent = q.q;
+      const opts = document.getElementById('quiz-options');
+      const feed = document.getElementById('quiz-feed');
+      
+      opts.innerHTML = '';
+      feed.className = 'feedback';
+      feed.textContent = '';
+
+      q.opts.forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = `${String.fromCharCode(65 + i)}. ${text}`;
+        btn.onclick = () => handleAnswer(i);
+        opts.appendChild(btn);
+      });
+
+      document.getElementById('prev-btn').disabled = (currentQ === 0);
+      document.getElementById('next-btn').disabled = (currentQ === examQuestions.length - 1);
+    }
+
+    function handleAnswer(idx) {
+      const q = examQuestions[currentQ];
+      const buttons = document.querySelectorAll('.opt-btn');
+      const feed = document.getElementById('quiz-feed');
+      buttons.forEach(b => b.disabled = true);
+
+      if (idx === q.ans) {
+        buttons[idx].classList.add('correct');
+        feed.className = 'feedback visible correct-f';
+        feed.textContent = `Correct! ${q.exp}`;
+      } else {
+        buttons[idx].classList.add('incorrect');
+        buttons[q.ans].classList.add('correct');
+        feed.className = 'feedback visible incorrect-f';
+        feed.textContent = `Incorrect. ${q.exp}`;
+      }
+    }
+
+    function navQuiz(delta) {
+      currentQ += delta;
+      renderQuiz();
+    }
+
+    function buildMatching() {
+      const tbody = document.getElementById('matching-body');
+      tbody.innerHTML = '';
+      const choices = ["-- Select Ideal --", "Education", "Individualism", "Puritan Work Ethic", "Separation of Church and State", "Freedom of Religion", "Socialism"];
+
+      matchingData.forEach((item, idx) => {
+        const row = document.createElement('tr');
+        const descCell = document.createElement('td');
+        descCell.textContent = item.desc;
+
+        const selectCell = document.createElement('td');
+        const sel = document.createElement('select');
+        sel.id = `match-${idx}`;
+        choices.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          sel.appendChild(opt);
+        });
+
+        selectCell.appendChild(sel);
+        row.appendChild(descCell);
+        row.appendChild(selectCell);
+        tbody.appendChild(row);
+      });
+    }
+
+    function gradeMatching() {
+      let correct = 0;
+      matchingData.forEach((item, idx) => {
+        const sel = document.getElementById(`match-${idx}`);
+        if (sel.value === item.correct) {
+          sel.style.borderColor = 'var(--success)';
+          correct++;
+        } else {
+          sel.style.borderColor = 'var(--danger)';
+        }
+      });
+      document.getElementById('matching-score').textContent = `Score: ${correct} / ${matchingData.length} Correct`;
+    }
+
+    function renderCard() {
+      const card = flashcards[currentCard];
+      document.getElementById('card-count').textContent = `Card ${currentCard + 1} of ${flashcards.length}`;
+      document.getElementById('card-front').textContent = card.term;
+      document.getElementById('card-back').textContent = card.def;
+      document.getElementById('card-inner').classList.remove('flipped');
+    }
+
+    function toggleCard() {
+      document.getElementById('card-inner').classList.toggle('flipped');
+    }
+
+    function handleCardKey(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleCard();
+      }
+    }
+
+    function navCard(delta) {
+      currentCard = (currentCard + delta + flashcards.length) % flashcards.length;
+      renderCard();
+    }
+
+    renderQuiz();
+    buildMatching();
+    renderCard();
+  </script>
+</body>
+</html>
