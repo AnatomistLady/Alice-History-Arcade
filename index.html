@@ -94,7 +94,7 @@
     }
 
     /* Flashcard Styles */
-    .card-wrap { perspective: 1000px; min-height: 220px; cursor: pointer; }
+    .card-wrap { perspective: 1000px; min-height: 220px; cursor: pointer; margin-bottom: 1rem; }
     .card-core {
       position: relative; width: 100%; min-height: 220px; text-align: center;
       transition: transform 0.4s ease; transform-style: preserve-3d;
@@ -116,6 +116,15 @@
       font-weight: 700; border-radius: 8px; cursor: pointer;
     }
     .action-btn:hover { background: var(--accent-hover); }
+
+    .btn-toggle-mastered {
+      background: #273559; color: var(--text); border: 2px solid var(--border);
+      padding: 0.65rem 1rem; font-weight: 700; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .btn-toggle-mastered.is-mastered {
+      background: rgba(34, 197, 94, 0.2); border-color: var(--success); color: var(--success);
+    }
 
     /* Round Complete Modal */
     .round-complete { display: none; text-align: center; padding: 2rem 1rem; }
@@ -214,10 +223,18 @@
 
     <!-- 4. FLASHCARDS -->
     <section id="panel-cards" class="panel" role="tabpanel" aria-labelledby="tab-cards">
+      <div class="mastery-bar-wrap" aria-label="Flashcards mastery"><div class="mastery-bar-fill" id="cardFill"></div></div>
+      <div class="mastery-stats">
+        <span id="cardMasteredText">Mastered: 0 / 12</span>
+        <span id="cardPctText">0% Mastered</span>
+      </div>
+
       <div class="card">
         <div class="card-top">
           <span class="round-tag" id="cardCounter">Card 1 of 12</span>
-          <span style="font-size:0.85rem; color:var(--text-muted);">Tap / Spacebar to Flip</span>
+          <button class="btn-toggle-mastered" id="cardMasteryBtn" onclick="toggleCardMastery()">
+            <span id="cardMasteryIcon">☆</span> <span id="cardMasteryLabel">Mark as Mastered</span>
+          </button>
         </div>
         <div class="card-wrap" onclick="toggleCard()" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCard()">
           <div class="card-core" id="flashcardCore">
@@ -225,7 +242,7 @@
             <div class="side back" id="cardBack">Back</div>
           </div>
         </div>
-        <div class="bottom-bar" style="margin-top:1.25rem;">
+        <div class="bottom-bar">
           <button class="action-btn" onclick="navCard(-1)">Previous</button>
           <button class="action-btn" onclick="toggleCard()">Flip</button>
           <button class="action-btn" onclick="navCard(1)">Next</button>
@@ -537,18 +554,18 @@
     ];
 
     const flashcards = [
-      { term: "Iroquois Confederacy (1500–1780)", def: "Powerful northeastern Haudenosaunee alliance of Five (later Six) Native nations balancing European rivals via diplomacy and fur trade." },
-      { term: "Mayflower Compact (1620)", def: "The first covenant of self-governance in New England, establishing a civil body politic ruled by majority consent." },
-      { term: "Bacon's Rebellion (1675–1677)", def: "Virginia frontier uprising uniting white and black laborers, accelerating the planter elite's transition toward lifelong African chattel slavery." },
-      { term: "Writs of Assistance", def: "Blanket, non-specific British search warrants allowing customs officers to search ships and warehouses for smuggled goods." },
-      { term: "Land Ordinance of 1785", def: "Confederation law surveying western lands into six-mile townships and reserving Section 16 to fund public schools." },
-      { term: "Northwest Ordinance of 1787", def: "Established a 60,000-person path to equal statehood and permanently banned slavery north of the Ohio River." },
-      { term: "Shays' Rebellion (1786–1787)", def: "Armed uprising of indebted Massachusetts farmers exposing the fatal military and economic weaknesses of the Articles." },
-      { term: "Mount Vernon Conference (1785)", def: "Bilateral meeting between MD and VA resolving Potomac navigation disputes, starting the momentum toward Philadelphia." },
-      { term: "Virginia Plan (1787)", def: "James Madison's proposal for three branches of government and a bicameral legislature apportioned strictly by population." },
-      { term: "New Jersey Plan (1787)", def: "William Paterson's small-state counterproposal calling for a unicameral legislature with equal voting power per state." },
-      { term: "Supremacy Clause (Art. VI)", def: "Constitutional clause establishing that the federal Constitution, laws, and treaties override conflicting state statutes." },
-      { term: "Tenth Amendment", def: "Reserves all powers not delegated to the federal government nor prohibited to the states to the states, or to the people." }
+      { id: "fc1", term: "Iroquois Confederacy (1500–1780)", def: "Powerful northeastern Haudenosaunee alliance of Five (later Six) Native nations balancing European rivals via diplomacy and fur trade." },
+      { id: "fc2", term: "Mayflower Compact (1620)", def: "The first covenant of self-governance in New England, establishing a civil body politic ruled by majority consent." },
+      { id: "fc3", term: "Bacon's Rebellion (1675–1677)", def: "Virginia frontier uprising uniting white and black laborers, accelerating the planter elite's transition toward lifelong African chattel slavery." },
+      { id: "fc4", term: "Writs of Assistance", def: "Blanket, non-specific British search warrants allowing customs officers to search ships and warehouses for smuggled goods." },
+      { id: "fc5", term: "Land Ordinance of 1785", def: "Confederation law surveying western lands into six-mile townships and reserving Section 16 to fund public schools." },
+      { id: "fc6", term: "Northwest Ordinance of 1787", def: "Established a 60,000-person path to equal statehood and permanently banned slavery north of the Ohio River." },
+      { id: "fc7", term: "Shays' Rebellion (1786–1787)", def: "Armed uprising of indebted Massachusetts farmers exposing the fatal military and economic weaknesses of the Articles." },
+      { id: "fc8", term: "Mount Vernon Conference (1785)", def: "Bilateral meeting between MD and VA resolving Potomac navigation disputes, starting the momentum toward Philadelphia." },
+      { id: "fc9", term: "Virginia Plan (1787)", def: "James Madison's proposal for three branches of government and a bicameral legislature apportioned strictly by population." },
+      { id: "fc10", term: "New Jersey Plan (1787)", def: "William Paterson's small-state counterproposal calling for a unicameral legislature with equal voting power per state." },
+      { id: "fc11", term: "Supremacy Clause (Art. VI)", def: "Constitutional clause establishing that the federal Constitution, laws, and treaties override conflicting state statutes." },
+      { id: "fc12", term: "Tenth Amendment", def: "Reserves all powers not delegated to the federal government nor prohibited to the states to the states, or to the people." }
     ];
 
     /* ============================================================
@@ -566,10 +583,10 @@
     }
 
     /* ============================================================
-       PERSISTENCE SYSTEM: V12 DIRECT TRACKING
+       PERSISTENCE SYSTEM: V13 WITH FLASHCARD TRACKING
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V12';
-    let arcadeData = { chrono: {}, quiz: {} };
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V13';
+    let arcadeData = { chrono: {}, quiz: {}, cards: {} };
 
     function loadStore() {
       try {
@@ -579,6 +596,7 @@
           if (parsed && typeof parsed === 'object') {
             arcadeData.chrono = parsed.chrono || {};
             arcadeData.quiz = parsed.quiz || {};
+            arcadeData.cards = parsed.cards || {};
           }
         }
       } catch (err) {
@@ -590,6 +608,9 @@
       });
       quizQuestions.forEach(q => {
         if (typeof arcadeData.quiz[q.id] !== 'number') arcadeData.quiz[q.id] = 0;
+      });
+      flashcards.forEach(fc => {
+        if (typeof arcadeData.cards[fc.id] !== 'number') arcadeData.cards[fc.id] = 0;
       });
 
       updateAllProgressBars();
@@ -630,6 +651,19 @@
       if (qFill) qFill.style.width = `${qPct}%`;
       if (qTxt) qTxt.textContent = `Mastered: ${qPoints} / ${quizQuestions.length}`;
       if (qPctTxt) qPctTxt.textContent = `${qPct}% Mastered`;
+
+      // 3. Flashcards Progress
+      let fcPoints = 0;
+      flashcards.forEach(fc => {
+        if ((arcadeData.cards[fc.id] || 0) > 0) fcPoints++;
+      });
+      const fcPct = Math.round((fcPoints / flashcards.length) * 100);
+      const fcFill = document.getElementById('cardFill');
+      const fcTxt = document.getElementById('cardMasteredText');
+      const fcPctTxt = document.getElementById('cardPctText');
+      if (fcFill) fcFill.style.width = `${fcPct}%`;
+      if (fcTxt) fcTxt.textContent = `Mastered: ${fcPoints} / ${flashcards.length}`;
+      if (fcPctTxt) fcPctTxt.textContent = `${fcPct}% Mastered`;
     }
 
     function switchMode(mode) {
@@ -902,15 +936,32 @@
     }
 
     /* ============================================================
-       MODULE 4: FLASHCARDS
+       MODULE 4: FLASHCARDS (WITH LIVE MASTERY TRACKING)
        ============================================================ */
     let cardIdx = 0;
+
     function renderFlashcard() {
       const c = flashcards[cardIdx];
+      const isMastered = (arcadeData.cards[c.id] || 0) > 0;
+
       document.getElementById('cardCounter').textContent = `Card ${cardIdx + 1} of ${flashcards.length}`;
       document.getElementById('cardFront').textContent = c.term;
       document.getElementById('cardBack').textContent = c.def;
       document.getElementById('flashcardCore').classList.remove('flipped');
+
+      const mBtn = document.getElementById('cardMasteryBtn');
+      const mIcon = document.getElementById('cardMasteryIcon');
+      const mLabel = document.getElementById('cardMasteryLabel');
+
+      if (isMastered) {
+        mBtn.classList.add('is-mastered');
+        mIcon.textContent = "★";
+        mLabel.textContent = "Mastered";
+      } else {
+        mBtn.classList.remove('is-mastered');
+        mIcon.textContent = "☆";
+        mLabel.textContent = "Mark as Mastered";
+      }
     }
 
     function toggleCard() {
@@ -919,6 +970,14 @@
 
     function navCard(dir) {
       cardIdx = (cardIdx + dir + flashcards.length) % flashcards.length;
+      renderFlashcard();
+    }
+
+    function toggleCardMastery() {
+      const c = flashcards[cardIdx];
+      const current = arcadeData.cards[c.id] || 0;
+      arcadeData.cards[c.id] = current > 0 ? 0 : 1;
+      saveStore();
       renderFlashcard();
     }
 
