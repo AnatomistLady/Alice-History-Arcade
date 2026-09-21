@@ -149,7 +149,7 @@
       <div id="chronoActiveCard" class="card">
         <div class="card-top">
           <span class="round-tag" id="chronoRoundTag">Challenge 1 of 5</span>
-          <span class="mastery-badge" id="chronoBadge">Mastery: 0/2</span>
+          <span class="mastery-badge" id="chronoBadge">Status: In Progress</span>
         </div>
         <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1rem;" id="chronoPrompt"></p>
         <ul class="timeline-list" id="chronoTimeline"></ul>
@@ -179,7 +179,7 @@
       <div id="quizActiveCard" class="card">
         <div class="card-top">
           <span class="round-tag" id="quizRoundTag">Question 1 of 10</span>
-          <span class="mastery-badge" id="quizBadge">Status: New</span>
+          <span class="mastery-badge" id="quizBadge">Status: In Progress</span>
         </div>
         <p class="question-prompt" id="quizPrompt"></p>
         <div class="options-grid" id="quizOpts"></div>
@@ -415,7 +415,7 @@
     ];
 
     /* ============================================================
-       DATA: 100 QUESTION POOL (WITH CORRECT ANSWERS LABELED)
+       DATA: 100 QUESTION POOL
        ============================================================ */
     const quizQuestions = [
       { id: "q1", q: "What was John Rolfe's primary economic contribution to Jamestown (1301.1c)?", correct: "Introducing and cultivating a mild, cured strain of West Indian tobacco", distractors: ["Discovering gold in the James River", "Constructing iron mills", "Drafting the Mayflower Compact"], exp: "Rolfe cultivated a mild West Indian tobacco that became Virginia's cash crop, providing the economic salvation Jamestown required." },
@@ -552,9 +552,23 @@
     ];
 
     /* ============================================================
-       PERSISTENCE SYSTEM: V11 WITH DIRECT POINT CALCULATION
+       FISHER-YATES SHUFFLE HELPER
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V11';
+    function fisherYatesShuffle(arr) {
+      const array = arr.slice();
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+
+    /* ============================================================
+       PERSISTENCE SYSTEM: V12 DIRECT TRACKING
+       ============================================================ */
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V12';
     let arcadeData = { chrono: {}, quiz: {} };
 
     function loadStore() {
@@ -604,7 +618,7 @@
       if (cTxt) cTxt.textContent = `Mastered: ${cPoints} / ${timelineChallenges.length}`;
       if (cPctTxt) cPctTxt.textContent = `${cPct}% Mastered`;
 
-      // 2. Quiz Progress: Direct count of questions mastered
+      // 2. Quiz Progress
       let qPoints = 0;
       quizQuestions.forEach(q => {
         if ((arcadeData.quiz[q.id] || 0) > 0) qPoints++;
@@ -634,16 +648,15 @@
     let cPool = [], cIdx = 0, cCorrect = 0, activeTimelineItems = [];
 
     function startChronologyRound() {
-      const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
       const unmastered = timelineChallenges.filter(c => (arcadeData.chrono[c.id] || 0) < 1);
 
       if (unmastered.length >= 5) {
-        cPool = shuffle(unmastered).slice(0, 5);
+        cPool = fisherYatesShuffle(unmastered).slice(0, 5);
       } else if (unmastered.length > 0) {
         const rem = timelineChallenges.filter(c => (arcadeData.chrono[c.id] || 0) >= 1);
-        cPool = shuffle(unmastered).concat(shuffle(rem).slice(0, 5 - unmastered.length));
+        cPool = fisherYatesShuffle(unmastered).concat(fisherYatesShuffle(rem).slice(0, 5 - unmastered.length));
       } else {
-        cPool = shuffle(timelineChallenges).slice(0, 5);
+        cPool = fisherYatesShuffle(timelineChallenges).slice(0, 5);
       }
 
       cIdx = 0; cCorrect = 0;
@@ -659,7 +672,7 @@
       document.getElementById('chronoBadge').textContent = isMastered ? `Status: Mastered ★` : `Status: In Progress`;
       document.getElementById('chronoPrompt').textContent = `Order these events chronologically from earliest (top) to latest (bottom) — [${ch.title}]:`;
 
-      activeTimelineItems = ch.events.map((e, i) => ({ ...e, orig: i })).sort(() => Math.random() - 0.5);
+      activeTimelineItems = fisherYatesShuffle(ch.events.map((e, i) => ({ ...e, orig: i })));
       document.getElementById('chronoFeedback').className = 'feedback-box';
       document.getElementById('chronoFeedback').textContent = '';
       document.getElementById('chronoSubmitBtn').style.display = 'inline-block';
@@ -757,16 +770,15 @@
     let qPool = [], qIdx = 0, qCorrect = 0, currentRenderedOpts = [];
 
     function startQuizRound() {
-      const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
       const unmastered = quizQuestions.filter(q => (arcadeData.quiz[q.id] || 0) < 1);
 
       if (unmastered.length >= 10) {
-        qPool = shuffle(unmastered).slice(0, 10);
+        qPool = fisherYatesShuffle(unmastered).slice(0, 10);
       } else if (unmastered.length > 0) {
         const rem = quizQuestions.filter(q => (arcadeData.quiz[q.id] || 0) >= 1);
-        qPool = shuffle(unmastered).concat(shuffle(rem).slice(0, 10 - unmastered.length));
+        qPool = fisherYatesShuffle(unmastered).concat(fisherYatesShuffle(rem).slice(0, 10 - unmastered.length));
       } else {
-        qPool = shuffle(quizQuestions).slice(0, 10);
+        qPool = fisherYatesShuffle(quizQuestions).slice(0, 10);
       }
 
       qIdx = 0; qCorrect = 0;
@@ -788,12 +800,14 @@
       document.getElementById('quizFeedback').textContent = '';
       document.getElementById('quizNextBtn').style.display = 'none';
 
-      // Assemble options: 1 correct + 3 distractors, then shuffle so the answer position is randomized
+      // Assemble: 1 correct option + 3 distractors, then shuffle using Fisher-Yates
       const rawChoices = [
         { text: q.correct, isAnswer: true },
-        ...q.distractors.map(d => ({ text: d, isAnswer: false }))
+        { text: q.distractors[0], isAnswer: false },
+        { text: q.distractors[1], isAnswer: false },
+        { text: q.distractors[2], isAnswer: false }
       ];
-      currentRenderedOpts = rawChoices.sort(() => Math.random() - 0.5);
+      currentRenderedOpts = fisherYatesShuffle(rawChoices);
 
       currentRenderedOpts.forEach((choice, i) => {
         const btn = document.createElement('button');
@@ -822,7 +836,6 @@
         arcadeData.quiz[q.id] = 1;
       } else {
         clickedBtn.classList.add('incorrect');
-        // Highlight the correct choice button
         const correctIndex = currentRenderedOpts.findIndex(c => c.isAnswer);
         if (correctIndex !== -1) buttons[correctIndex].classList.add('correct');
 
