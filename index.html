@@ -127,7 +127,7 @@
   <main class="app-shell" role="main">
     <header>
       <h1>HIST 1301 Study Arcade</h1>
-      <p>Unit 1 Interactive Engine (Prof. Chad Tomaselli)</p>
+      <p>Unit 1 Interactive Review (Prof. Chad Tomaselli)</p>
     </header>
 
     <!-- Navigation Tabs -->
@@ -142,7 +142,7 @@
     <section id="panel-chrono" class="panel active" role="tabpanel" aria-labelledby="tab-chrono">
       <div class="mastery-bar-wrap" aria-label="Chronology mastery"><div class="mastery-bar-fill" id="chronoFill"></div></div>
       <div class="mastery-stats">
-        <span id="chronoMasteredText">Mastered: 0 / 15</span>
+        <span id="chronoMasteredText">Score: 0 / 15</span>
         <span id="chronoPctText">0% Progress</span>
       </div>
 
@@ -172,14 +172,14 @@
     <section id="panel-quiz" class="panel" role="tabpanel" aria-labelledby="tab-quiz">
       <div class="mastery-bar-wrap" aria-label="Quiz mastery"><div class="mastery-bar-fill" id="quizFill"></div></div>
       <div class="mastery-stats">
-        <span id="quizMasteredText">Mastered: 0 / 100</span>
-        <span id="quizPctText">0% Progress</span>
+        <span id="quizMasteredText">Questions Correct: 0 / 100</span>
+        <span id="quizPctText">0% Mastered</span>
       </div>
 
       <div id="quizActiveCard" class="card">
         <div class="card-top">
           <span class="round-tag" id="quizRoundTag">Question 1 of 10</span>
-          <span class="mastery-badge" id="quizBadge">Mastery: 0/2</span>
+          <span class="mastery-badge" id="quizBadge">Level: 0/2</span>
         </div>
         <p class="question-prompt" id="quizPrompt"></p>
         <div class="options-grid" id="quizOpts"></div>
@@ -552,9 +552,9 @@
     ];
 
     /* ============================================================
-       PERSISTENCE SYSTEM: WEIGHTED PROGRESSION
+       PERSISTENCE SYSTEM (V10 - IMMEDIATE INCREMENTAL TRACKING)
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_INSTANT_V6';
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V10';
     let arcadeData = { chrono: {}, quiz: {} };
 
     function loadStore() {
@@ -568,9 +568,10 @@
           }
         }
       } catch (err) {
-        console.warn("Storage access restricted", err);
+        console.warn("Storage restricted", err);
       }
 
+      // Populate any missing IDs without clearing existing scores
       timelineChallenges.forEach(c => {
         if (typeof arcadeData.chrono[c.id] !== 'number') arcadeData.chrono[c.id] = 0;
       });
@@ -591,41 +592,33 @@
     }
 
     function updateAllProgressBars() {
-      // 1. Chronology: Count full masters and partial points
-      let cFullyMastered = 0;
+      // 1. Chronology Progress
       let cPoints = 0;
       timelineChallenges.forEach(c => {
         const lvl = arcadeData.chrono[c.id] || 0;
-        if (lvl >= 2) cFullyMastered++;
-        cPoints += Math.min(lvl, 2);
+        if (lvl > 0) cPoints++;
       });
-      const cMaxPoints = timelineChallenges.length * 2;
-      const cPct = Math.round((cPoints / cMaxPoints) * 100);
-
+      const cPct = Math.round((cPoints / timelineChallenges.length) * 100);
       const cFill = document.getElementById('chronoFill');
       const cTxt = document.getElementById('chronoMasteredText');
       const cPctTxt = document.getElementById('chronoPctText');
       if (cFill) cFill.style.width = `${cPct}%`;
-      if (cTxt) cTxt.textContent = `Mastered: ${cFullyMastered} / ${timelineChallenges.length} (${cPoints} pts)`;
+      if (cTxt) cTxt.textContent = `Completed: ${cPoints} / ${timelineChallenges.length}`;
       if (cPctTxt) cPctTxt.textContent = `${cPct}% Progress`;
 
-      // 2. Quiz: Give immediate 50% credit for level 1, 100% for level 2
-      let qFullyMastered = 0;
+      // 2. Quiz Progress: counts each question answered correctly
       let qPoints = 0;
       quizQuestions.forEach(q => {
         const lvl = arcadeData.quiz[q.id] || 0;
-        if (lvl >= 2) qFullyMastered++;
-        qPoints += Math.min(lvl, 2);
+        if (lvl > 0) qPoints++;
       });
-      const qMaxPoints = quizQuestions.length * 2;
-      const qPct = Math.round((qPoints / qMaxPoints) * 100);
-
+      const qPct = Math.round((qPoints / quizQuestions.length) * 100);
       const qFill = document.getElementById('quizFill');
       const qTxt = document.getElementById('quizMasteredText');
       const qPctTxt = document.getElementById('quizPctText');
       if (qFill) qFill.style.width = `${qPct}%`;
-      if (qTxt) qTxt.textContent = `Mastered: ${qFullyMastered} / ${quizQuestions.length} (${qPoints} pts)`;
-      if (qPctTxt) qPctTxt.textContent = `${qPct}% Progress`;
+      if (qTxt) qTxt.textContent = `Questions Correct: ${qPoints} / ${quizQuestions.length}`;
+      if (qPctTxt) qPctTxt.textContent = `${qPct}% Mastered`;
     }
 
     function switchMode(mode) {
@@ -666,7 +659,7 @@
       const ch = cPool[cIdx];
       const lvl = arcadeData.chrono[ch.id] || 0;
       document.getElementById('chronoRoundTag').textContent = `Challenge ${cIdx + 1} of 5`;
-      document.getElementById('chronoBadge').textContent = `Mastery: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
+      document.getElementById('chronoBadge').textContent = `Level: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
       document.getElementById('chronoPrompt').textContent = `Order these events chronologically from earliest (top) to latest (bottom) — [${ch.title}]:`;
 
       activeTimelineItems = ch.events.map((e, i) => ({ ...e, orig: i })).sort(() => Math.random() - 0.5);
@@ -741,8 +734,7 @@
         cCorrect++;
         fb.className = 'feedback-box show pass';
         fb.innerHTML = `<strong>✓ Chronologically Perfect!</strong> ${ch.rationale}`;
-        if (!arcadeData.chrono[ch.id]) arcadeData.chrono[ch.id] = 0;
-        if (arcadeData.chrono[ch.id] < 2) arcadeData.chrono[ch.id]++;
+        arcadeData.chrono[ch.id] = (arcadeData.chrono[ch.id] || 0) + 1;
       } else {
         fb.className = 'feedback-box show fail';
         fb.innerHTML = `<strong>✗ Out of Sequence.</strong> Check the revealed dates above. ${ch.rationale}`;
@@ -790,7 +782,7 @@
       const q = qPool[qIdx];
       const lvl = arcadeData.quiz[q.id] || 0;
       document.getElementById('quizRoundTag').textContent = `Question ${qIdx + 1} of 10`;
-      document.getElementById('quizBadge').textContent = `Mastery: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
+      document.getElementById('quizBadge').textContent = `Level: ${lvl}/2 ${lvl >= 2 ? '★' : ''}`;
       document.getElementById('quizPrompt').textContent = q.q;
 
       const opts = document.getElementById('quizOpts');
@@ -821,8 +813,7 @@
         fb.className = 'feedback-box show pass';
         fb.innerHTML = `<strong>✓ Correct!</strong> ${q.exp}`;
         qCorrect++;
-        if (!arcadeData.quiz[q.id]) arcadeData.quiz[q.id] = 0;
-        if (arcadeData.quiz[q.id] < 2) arcadeData.quiz[q.id]++;
+        arcadeData.quiz[q.id] = (arcadeData.quiz[q.id] || 0) + 1;
       } else {
         clickedBtn.classList.add('incorrect');
         buttons[q.a].classList.add('correct');
@@ -831,11 +822,10 @@
         arcadeData.quiz[q.id] = 0;
       }
 
-      // Update question badge
       const newLvl = arcadeData.quiz[q.id] || 0;
-      document.getElementById('quizBadge').textContent = `Mastery: ${newLvl}/2 ${newLvl >= 2 ? '★' : ''}`;
+      document.getElementById('quizBadge').textContent = `Level: ${newLvl}/2 ${newLvl >= 2 ? '★' : ''}`;
 
-      // Immediately write to storage and update top bar
+      // Save changes immediately and recalculate top progress bar
       saveStore();
       document.getElementById('quizNextBtn').style.display = 'inline-block';
     }
