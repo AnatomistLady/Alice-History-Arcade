@@ -94,18 +94,20 @@
     }
 
     /* Flashcard Styles */
-    .card-wrap { perspective: 1000px; min-height: 220px; cursor: pointer; margin-bottom: 1rem; }
+    .card-wrap { perspective: 1000px; min-height: 230px; cursor: pointer; margin-bottom: 1rem; }
     .card-core {
-      position: relative; width: 100%; min-height: 220px; text-align: center;
+      position: relative; width: 100%; min-height: 230px; text-align: center;
       transition: transform 0.4s ease; transform-style: preserve-3d;
       border: 2px solid var(--border); border-radius: var(--radius);
       background: var(--card-inner); display: flex; align-items: center; justify-content: center; padding: 1.5rem;
     }
     .card-core.flipped { transform: rotateY(180deg); border-color: var(--accent); }
-    .side { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 1.5rem; font-size: 1.15rem; }
-    .side.back { transform: rotateY(180deg); color: var(--text); }
+    .side { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; }
+    .side.front { font-size: 1.05rem; line-height: 1.5; color: #e2e8f0; }
+    .side.back { transform: rotateY(180deg); color: var(--accent); font-size: 1.35rem; font-weight: 800; }
+    .card-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
 
-    /* Feedbacks & Controls */
+    /* Controls */
     .feedback-box { margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.45; display: none; }
     .feedback-box.show { display: block; }
     .feedback-box.pass { background: rgba(34, 197, 94, 0.15); border-left: 4px solid var(--success); }
@@ -126,7 +128,6 @@
       background: rgba(34, 197, 94, 0.2); border-color: var(--success); color: var(--success);
     }
 
-    /* Round Complete Modal */
     .round-complete { display: none; text-align: center; padding: 2rem 1rem; }
     .round-complete h2 { color: var(--accent); margin-bottom: 0.5rem; }
     .score-circle { font-size: 2.5rem; font-weight: 800; color: var(--success); margin: 1rem 0; }
@@ -238,8 +239,14 @@
         </div>
         <div class="card-wrap" onclick="toggleCard()" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCard()">
           <div class="card-core" id="flashcardCore">
-            <div class="side front" id="cardFront">Front</div>
-            <div class="side back" id="cardBack">Back</div>
+            <div class="side front">
+              <span id="cardFrontText">Definition</span>
+              <span class="card-hint">Click / Press Space to Flip for Term</span>
+            </div>
+            <div class="side back">
+              <span id="cardBackText">Term</span>
+              <span class="card-hint" style="color:var(--accent);">Term</span>
+            </div>
           </div>
         </div>
         <div class="bottom-bar">
@@ -583,9 +590,9 @@
     }
 
     /* ============================================================
-       PERSISTENCE SYSTEM: V13 WITH FLASHCARD TRACKING
+       PERSISTENCE SYSTEM: V14 WITH FLASHCARD & QUESTION TRACKING
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V13';
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V14';
     let arcadeData = { chrono: {}, quiz: {}, cards: {} };
 
     function loadStore() {
@@ -896,24 +903,39 @@
     }
 
     /* ============================================================
-       MODULE 3: MATCHING LAB
+       MODULE 3: MATCHING LAB (SHUFFLED ROWS & DE-ALIGNED DROPDOWNS)
        ============================================================ */
+    let shuffledMatchingRows = [];
+
     function buildMatching() {
       const tbody = document.getElementById('matchingBody');
       tbody.innerHTML = '';
-      const choices = [
-        "-- Select Match --", "Individualism", "Education", "Puritan Work Ethic",
-        "Mount Vernon Conference", "Annapolis Convention", "Virginia Plan", "New Jersey Plan",
-        "Great Compromise", "Three-Fifths Compromise", "Slave Trade Compromise"
-      ];
 
-      matchingItems.forEach((item, i) => {
+      // Shuffle row presentation completely
+      shuffledMatchingRows = fisherYatesShuffle(matchingItems);
+
+      // Collect all distinct term options
+      const allChoices = Array.from(new Set(matchingItems.map(m => m.correct)));
+
+      shuffledMatchingRows.forEach((item, i) => {
+        // Shuffle the dropdown options per row
+        let rowChoices = fisherYatesShuffle(allChoices);
+
+        // De-align: Ensure the correct answer is not at index 0 of the choices
+        if (rowChoices[0] === item.correct) {
+          const swapIdx = Math.floor(Math.random() * (rowChoices.length - 1)) + 1;
+          const tmp = rowChoices[0];
+          rowChoices[0] = rowChoices[swapIdx];
+          rowChoices[swapIdx] = tmp;
+        }
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${item.desc}</td>
           <td>
             <select id="matchSel-${i}" aria-label="Match selection ${i+1}">
-              ${choices.map(c => `<option value="${c}">${c}</option>`).join('')}
+              <option value="">-- Select Term --</option>
+              ${rowChoices.map(c => `<option value="${c}">${c}</option>`).join('')}
             </select>
           </td>
         `;
@@ -923,7 +945,7 @@
 
     function gradeMatching() {
       let score = 0;
-      matchingItems.forEach((item, i) => {
+      shuffledMatchingRows.forEach((item, i) => {
         const sel = document.getElementById(`matchSel-${i}`);
         if (sel.value === item.correct) {
           sel.style.borderColor = 'var(--success)';
@@ -932,11 +954,11 @@
           sel.style.borderColor = 'var(--danger)';
         }
       });
-      document.getElementById('matchingScore').textContent = `Score: ${score} / ${matchingItems.length}`;
+      document.getElementById('matchingScore').textContent = `Score: ${score} / ${shuffledMatchingRows.length}`;
     }
 
     /* ============================================================
-       MODULE 4: FLASHCARDS (WITH LIVE MASTERY TRACKING)
+       MODULE 4: FLASHCARDS (DEFINITION FIRST -> FLIP TO TERM)
        ============================================================ */
     let cardIdx = 0;
 
@@ -945,8 +967,9 @@
       const isMastered = (arcadeData.cards[c.id] || 0) > 0;
 
       document.getElementById('cardCounter').textContent = `Card ${cardIdx + 1} of ${flashcards.length}`;
-      document.getElementById('cardFront').textContent = c.term;
-      document.getElementById('cardBack').textContent = c.def;
+      // Definition on the FRONT, Term on the BACK
+      document.getElementById('cardFrontText').textContent = c.def;
+      document.getElementById('cardBackText').textContent = c.term;
       document.getElementById('flashcardCore').classList.remove('flipped');
 
       const mBtn = document.getElementById('cardMasteryBtn');
