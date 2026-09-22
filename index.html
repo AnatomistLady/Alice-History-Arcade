@@ -94,18 +94,18 @@
     }
 
     /* Flashcard Styles */
-    .card-wrap { perspective: 1000px; min-height: 230px; cursor: pointer; margin-bottom: 1rem; }
+    .card-wrap { perspective: 1000px; min-height: 250px; cursor: pointer; margin-bottom: 1rem; }
     .card-core {
-      position: relative; width: 100%; min-height: 230px; text-align: center;
+      position: relative; width: 100%; min-height: 250px; text-align: center;
       transition: transform 0.4s ease; transform-style: preserve-3d;
       border: 2px solid var(--border); border-radius: var(--radius);
       background: var(--card-inner); display: flex; align-items: center; justify-content: center; padding: 1.5rem;
     }
     .card-core.flipped { transform: rotateY(180deg); border-color: var(--accent); }
     .side { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; }
-    .side.front { font-size: 1.05rem; line-height: 1.5; color: #e2e8f0; }
-    .side.back { transform: rotateY(180deg); color: var(--accent); font-size: 1.35rem; font-weight: 800; }
-    .card-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+    .side.front { font-size: 1.1rem; line-height: 1.55; color: #f1f5f9; }
+    .side.back { transform: rotateY(180deg); color: var(--accent); font-size: 1.4rem; font-weight: 800; line-height: 1.4; }
+    .card-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
 
     /* Controls */
     .feedback-box { margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.45; display: none; }
@@ -210,7 +210,10 @@
     <!-- 3. MATCHING LAB -->
     <section id="panel-match" class="panel" role="tabpanel" aria-labelledby="tab-match">
       <div class="card">
-        <h2 style="font-size:1.15rem; margin-bottom:0.75rem; color:var(--accent);">Puritan Ideals, Reform Conferences & Constitutional Plans</h2>
+        <div class="card-top">
+          <h2 style="font-size:1.15rem; color:var(--accent);">Puritan Ideals, Reform Conferences & Constitutional Plans</h2>
+          <button class="action-btn" style="padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="buildMatching()">Reshuffle Matching</button>
+        </div>
         <table class="matching-table" aria-label="Matching table">
           <thead><tr><th style="width:60%;">Description / Prompt</th><th style="width:40%;">Term / Plan</th></tr></thead>
           <tbody id="matchingBody"></tbody>
@@ -239,12 +242,14 @@
         </div>
         <div class="card-wrap" onclick="toggleCard()" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')toggleCard()">
           <div class="card-core" id="flashcardCore">
+            <!-- Front shows Definition/Description -->
             <div class="side front">
-              <span id="cardFrontText">Definition</span>
-              <span class="card-hint">Click / Press Space to Flip for Term</span>
+              <span id="cardFrontText"></span>
+              <span class="card-hint">Click / Tap to Flip for Term</span>
             </div>
+            <!-- Back reveals Term -->
             <div class="side back">
-              <span id="cardBackText">Term</span>
+              <span id="cardBackText"></span>
               <span class="card-hint" style="color:var(--accent);">Term</span>
             </div>
           </div>
@@ -590,9 +595,9 @@
     }
 
     /* ============================================================
-       PERSISTENCE SYSTEM: V14 WITH FLASHCARD & QUESTION TRACKING
+       PERSISTENCE SYSTEM: V15
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V14';
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V15';
     let arcadeData = { chrono: {}, quiz: {}, cards: {} };
 
     function loadStore() {
@@ -841,7 +846,7 @@
       document.getElementById('quizFeedback').textContent = '';
       document.getElementById('quizNextBtn').style.display = 'none';
 
-      // Assemble: 1 correct option + 3 distractors, then shuffle using Fisher-Yates
+      // 1 correct option + 3 distractors, randomized via Fisher-Yates
       const rawChoices = [
         { text: q.correct, isAnswer: true },
         { text: q.distractors[0], isAnswer: false },
@@ -903,43 +908,44 @@
     }
 
     /* ============================================================
-       MODULE 3: MATCHING LAB (SHUFFLED ROWS & DE-ALIGNED DROPDOWNS)
+       MODULE 3: MATCHING LAB (SHUFFLED ROWS & INDEPENDENT CHOICES)
        ============================================================ */
     let shuffledMatchingRows = [];
 
     function buildMatching() {
       const tbody = document.getElementById('matchingBody');
       tbody.innerHTML = '';
+      document.getElementById('matchingScore').textContent = '';
 
-      // Shuffle row presentation completely
+      // 1. Shuffle rows completely
       shuffledMatchingRows = fisherYatesShuffle(matchingItems);
 
-      // Collect all distinct term options
-      const allChoices = Array.from(new Set(matchingItems.map(m => m.correct)));
+      // 2. Extract unique terms
+      const allTerms = Array.from(new Set(matchingItems.map(m => m.correct)));
 
       shuffledMatchingRows.forEach((item, i) => {
-        // Shuffle the dropdown options per row
-        let rowChoices = fisherYatesShuffle(allChoices);
+        // 3. Shuffle options independently per row
+        let rowOptions = fisherYatesShuffle(allTerms);
 
-        // De-align: Ensure the correct answer is not at index 0 of the choices
-        if (rowChoices[0] === item.correct) {
-          const swapIdx = Math.floor(Math.random() * (rowChoices.length - 1)) + 1;
-          const tmp = rowChoices[0];
-          rowChoices[0] = rowChoices[swapIdx];
-          rowChoices[swapIdx] = tmp;
+        // 4. Force de-alignment: Never let the first choice match the row's correct answer
+        if (rowOptions[0] === item.correct) {
+          const swapIndex = Math.floor(Math.random() * (rowOptions.length - 1)) + 1;
+          const temp = rowOptions[0];
+          rowOptions[0] = rowOptions[swapIndex];
+          rowOptions[swapIndex] = temp;
         }
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
           <td>${item.desc}</td>
           <td>
-            <select id="matchSel-${i}" aria-label="Match selection ${i+1}">
+            <select id="matchSel-${i}" aria-label="Term match for prompt ${i+1}">
               <option value="">-- Select Term --</option>
-              ${rowChoices.map(c => `<option value="${c}">${c}</option>`).join('')}
+              ${rowOptions.map(term => `<option value="${term}">${term}</option>`).join('')}
             </select>
           </td>
         `;
-        tbody.appendChild(row);
+        tbody.appendChild(tr);
       });
     }
 
@@ -958,7 +964,7 @@
     }
 
     /* ============================================================
-       MODULE 4: FLASHCARDS (DEFINITION FIRST -> FLIP TO TERM)
+       MODULE 4: FLASHCARDS (DEFINITION ON FRONT, TERM ON BACK)
        ============================================================ */
     let cardIdx = 0;
 
@@ -967,7 +973,8 @@
       const isMastered = (arcadeData.cards[c.id] || 0) > 0;
 
       document.getElementById('cardCounter').textContent = `Card ${cardIdx + 1} of ${flashcards.length}`;
-      // Definition on the FRONT, Term on the BACK
+      
+      // Front displays definition; Back reveals term
       document.getElementById('cardFrontText').textContent = c.def;
       document.getElementById('cardBackText').textContent = c.term;
       document.getElementById('flashcardCore').classList.remove('flipped');
