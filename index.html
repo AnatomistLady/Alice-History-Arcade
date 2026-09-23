@@ -31,7 +31,6 @@
     header h1 { font-size: 1.6rem; color: var(--accent); margin-bottom: 0.25rem; }
     header p { font-size: 0.9rem; color: var(--text-muted); }
 
-    /* Nav Tabs */
     .arcade-tabs { display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0 1.25rem; flex-wrap: wrap; }
     .tab-btn {
       background: var(--card-bg); color: var(--text); border: 2px solid var(--border);
@@ -44,18 +43,15 @@
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* Cards & UI */
     .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); margin-bottom: 1rem; }
     .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .round-tag { background: #0f172a; color: var(--accent); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border); }
     .mastery-badge { font-size: 0.85rem; font-weight: 700; color: var(--warning); }
 
-    /* Progress bar */
     .mastery-bar-wrap { background: #090d16; border-radius: 20px; height: 16px; overflow: hidden; margin: 0.5rem 0; border: 1px solid var(--border); }
     .mastery-bar-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 100%; width: 0%; transition: width 0.3s ease; }
     .mastery-stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 1rem; }
 
-    /* Chronology List Styles */
     .timeline-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem; list-style: none; }
     .timeline-item {
       background: var(--card-inner); border: 2px solid var(--border); color: var(--text); padding: 0.75rem 0.9rem;
@@ -77,7 +73,6 @@
     .btn-shift:hover:not(:disabled) { background: var(--accent); color: #0b132b; }
     .btn-shift:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* Quiz Option Styles */
     .question-prompt { font-size: 1.05rem; font-weight: 600; line-height: 1.45; margin-bottom: 1rem; }
     .options-grid { display: flex; flex-direction: column; gap: 0.6rem; }
     .opt-btn {
@@ -88,7 +83,6 @@
     .opt-btn.correct { background: rgba(34, 197, 94, 0.2) !important; border-color: var(--success) !important; }
     .opt-btn.incorrect { background: rgba(239, 68, 68, 0.2) !important; border-color: var(--danger) !important; }
 
-    /* Matching Styles */
     .matching-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
     .matching-table th, .matching-table td { padding: 0.85rem; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
     .matching-table select {
@@ -96,7 +90,6 @@
       padding: 0.5rem; border-radius: 6px; font-size: 0.9rem; width: 100%;
     }
 
-    /* Flashcard Styles */
     .card-wrap { perspective: 1000px; min-height: 250px; cursor: pointer; margin-bottom: 1rem; }
     .card-core {
       position: relative; width: 100%; min-height: 250px; text-align: center;
@@ -110,7 +103,6 @@
     .side.back { transform: rotateY(180deg); color: var(--accent); font-size: 1.4rem; font-weight: 800; line-height: 1.4; }
     .card-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
 
-    /* Controls */
     .feedback-box { margin-top: 1rem; padding: 0.85rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.45; display: none; }
     .feedback-box.show { display: block; }
     .feedback-box.pass { background: rgba(34, 197, 94, 0.15); border-left: 4px solid var(--success); }
@@ -143,7 +135,6 @@
       <p>Unit 1 Interactive Engine (Prof. Chad Tomaselli)</p>
     </header>
 
-    <!-- Navigation Tabs -->
     <nav class="arcade-tabs" role="tablist" aria-label="Arcade Modes">
       <button class="tab-btn" id="tab-chrono" role="tab" aria-selected="true" aria-controls="panel-chrono" onclick="switchMode('chrono')">Chronology Arcade</button>
       <button class="tab-btn" id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" onclick="switchMode('quiz')">Mastery Quiz (100)</button>
@@ -214,7 +205,7 @@
     <section id="panel-match" class="panel" role="tabpanel" aria-labelledby="tab-match">
       <div class="card">
         <div class="card-top">
-          <h2 style="font-size:1.15rem; color:var(--accent);">Puritan Ideals, Reform Conferences & Constitutional Plans</h2>
+          <h2 style="font-size:1.15rem; color:var(--accent);">Puritan Ideals, Reform Conferences &amp; Constitutional Plans</h2>
           <button class="action-btn" style="padding:0.4rem 0.8rem; font-size:0.8rem;" onclick="buildMatching()">Reshuffle Matching</button>
         </div>
         <table class="matching-table" aria-label="Matching table">
@@ -445,7 +436,7 @@
     ];
 
     /* ============================================================
-       DATA: 100 QUESTION POOL (BALANCED OPTION LENGTHS)
+       DATA: 100 QUESTION POOL (BALANCED & LENGTH-MATCHED DISTRACTORS)
        ============================================================ */
     const quizQuestions = [
       { 
@@ -453,20 +444,20 @@
         q: "What was John Rolfe's primary economic contribution to Jamestown (1301.1c)?", 
         correct: "Cultivating a cured, marketable strain of West Indian tobacco", 
         distractors: [
-          "Discovering profitable gold and silver veins along the James River", 
-          "Constructing the first commercial iron furnaces and lumber sawmills", 
-          "Authoring the Mayflower Compact to organize communal crop production"
+          "Discovering extensive alluvial gold and silver veins along the upper James River basin", 
+          "Constructing the first commercial water-powered iron furnaces and naval lumber sawmills", 
+          "Authoring the Mayflower Compact to organize communal crop production and shared storage"
         ], 
         exp: "Rolfe cultivated a mild West Indian tobacco that became Virginia's cash crop, providing the economic salvation Jamestown required." 
       },
       { 
         id: "q2", 
         q: "Which 1620 foundational document established majority rule and self-governance for Pilgrims (1301.2a)?", 
-        correct: "Mayflower Compact", 
+        correct: "The Mayflower Compact covenant", 
         distractors: [
-          "Virginia Charter", 
-          "Albany Union Plan", 
-          "Fundamental Rules"
+          "The First Charter of Virginia company", 
+          "The Albany Plan of Union resolution", 
+          "The Fundamental Orders of Connecticut"
         ], 
         exp: "The Mayflower Compact created a civil body politic based on majority consent before settlers disembarked at Plymouth." 
       },
@@ -475,9 +466,9 @@
         q: "What immediate shift in Virginia labor followed Bacon's Rebellion in 1676 (1301.1d & 1301.2c)?", 
         correct: "Transitioning toward racial chattel slavery to avoid multiracial laborer revolts", 
         distractors: [
-          "Granting full unconditional emancipation to all indentured European servants", 
-          "Switching exclusively to captured indigenous laborers from interior nations", 
-          "Abandoning plantation agriculture in favor of family-operated wheat farming"
+          "Granting full unconditional emancipation and small land tracts to all indentured European servants", 
+          "Switching exclusively to captured indigenous laborers from interior non-allied tribal nations", 
+          "Abandoning commercial cash-crop agriculture in favor of small family-operated subsistence grain farms"
         ], 
         exp: "Bacon's Rebellion terrified elite planters with its coalition of landless white and black servants, speeding the transition to race-based chattel slavery." 
       },
@@ -486,9 +477,9 @@
         q: "Under British mercantilism, what was the primary requirement for 'enumerated commodities' (1301.2d)?", 
         correct: "They could only be legally shipped directly to Great Britain or colonial ports", 
         distractors: [
-          "They were exempt from customs duties to encourage rapid colonial extraction", 
-          "They were banned from manufacture in the New World to protect London guilds", 
-          "They were reserved exclusively for domestic frontier trade with Native tribes"
+          "They were exempt from customs duties to encourage rapid extraction and immediate colonial manufacturing", 
+          "They were banned from manufacture in the New World to protect traditional domestic guilds across London", 
+          "They were reserved exclusively for domestic frontier trade with Native tribes across the Ohio Valley"
         ], 
         exp: "Under the Navigation Acts, enumerated commodities (like tobacco and sugar) had to be delivered exclusively to Britain to preserve an imperial monopoly." 
       },
@@ -497,20 +488,20 @@
         q: "Why did the British Crown issue the Proclamation of 1763 following the French and Indian War (1301.3b)?", 
         correct: "Halting trans-Appalachian settlement to reduce native clashes and defense costs", 
         distractors: [
-          "Building a permanent deepwater naval fortress to protect shipping in New Orleans", 
-          "Enforcing the Woolens Act across Boston textile mills and commercial harbors", 
-          "Ceding the Ohio Country back to French administrative authorities to end debt"
+          "Building a permanent deepwater naval fortress to protect merchant shipping channels in New Orleans", 
+          "Enforcing the Woolens Act across Boston textile mills and commercial harbors along Massachusetts Bay", 
+          "Ceding the Ohio Country back to French administrative authorities to eliminate mounting royal treasury debt"
         ], 
         exp: "Pontiac's Rebellion prompted Britain to bar settlers west of the Appalachian divide to avoid expensive frontier military commitments." 
       },
       { 
         id: "q6", 
         q: "How did Parliament counter colonial complaints about lack of seated members in Parliament (1301.3d)?", 
-        correct: "Virtual Representation", 
+        correct: "Doctrine of Virtual Representation", 
         distractors: [
-          "Direct Democracy Rules", 
-          "Lockean Social Compact", 
-          "Tripartite Separation"
+          "Theory of Direct Democratic Assembly", 
+          "Principle of Lockean Social Compacts", 
+          "Mandate of Tripartite Power Balance"
         ], 
         exp: "Parliament asserted that every MP represented the interests of all British subjects across the empire, making seated geographic delegates unnecessary." 
       },
@@ -519,9 +510,9 @@
         q: "What was the direct diplomatic significance of the Continental victory at Saratoga in 1777 (1301.4c)?", 
         correct: "Convincing France to forge an official military alliance with financial aid", 
         distractors: [
-          "Forcing King George III to repeal the Tea Act and Coercive Acts immediately", 
-          "Bringing an immediate end to the armed conflict across the northern theater", 
-          "Compelling Spanish naval forces to surrender East Florida to local militias"
+          "Forcing King George III and Lord North to repeal the Tea Act and Coercive Acts immediately", 
+          "Bringing an immediate conclusion to all major military campaigns across the northern battlefront", 
+          "Compelling Spanish naval squadrons to cede East and West Florida directly to provincial militias"
         ], 
         exp: "The capture of Burgoyne's army at Saratoga proved the Americans could win in the field, securing the formal Franco-American alliance." 
       },
@@ -530,9 +521,9 @@
         q: "Under the Articles of Confederation, which of the following was a fatal power the national government lacked (1301.5a & 1301.5b)?", 
         correct: "Levying taxes directly and regulating commercial trade", 
         distractors: [
-          "Declaring foreign wars and ratifying military treaties", 
-          "Surveying and subdividing newly ceded western territories", 
-          "Establishing and managing a continental post office system"
+          "Declaring foreign wars, dispatching ambassadors, and ratifying defensive military treaties", 
+          "Surveying and subdividing newly ceded western territories through comprehensive land ordinances", 
+          "Establishing and managing a uniform continental post office network connecting all thirteen states"
         ], 
         exp: "The Confederation Congress could neither levy taxes directly nor regulate commerce, leaving it powerless to pay debts or resolve trade wars." 
       },
@@ -541,9 +532,9 @@
         q: "Roger Sherman's Great Compromise reconciled large and small states at the 1787 Convention by (1301.6b):", 
         correct: "Creating a proportional House of Representatives and an equal-vote Senate", 
         distractors: [
-          "Structuring a single-chamber legislature apportioned strictly by land value", 
-          "Abolishing the Electoral College in favor of an executive council of governors", 
-          "Granting individual states absolute constitutional veto power over tariffs"
+          "Structuring a single-chamber legislature apportioned strictly by total assessed land valuation", 
+          "Abolishing the Electoral College in favor of an executive council of sitting regional governors", 
+          "Granting individual states absolute constitutional veto power over federal commercial tariffs"
         ], 
         exp: "The Connecticut Compromise balanced large-state population demands in the House with small-state equal power in the Senate." 
       },
@@ -552,9 +543,9 @@
         q: "Which core concept from John Locke's Social Contract directly shaped Jefferson's Declaration (1301.4b)?", 
         correct: "Government legitimacy derives from the consent of the governed to protect rights", 
         distractors: [
-          "Monarchical sovereignty derives from unbroken hereditary lineage ordained by God", 
-          "Executive magistrates must hold lifetime tenure to prevent factional mob rule", 
-          "Parliamentary statutes supersede natural rights in all domestic civil affairs"
+          "Monarchical sovereignty derives from unbroken hereditary lineage ordained by divine providence", 
+          "Executive magistrates must hold lifetime tenure to prevent the rise of factional popular mob rule", 
+          "Parliamentary statutes supersede fundamental natural rights in all domestic and colonial affairs"
         ], 
         exp: "Locke argued that people form governments to secure natural rights; if power is abused, the contract is broken and citizens may alter it." 
       },
@@ -563,9 +554,9 @@
         q: "What mystery marks the historical record of the Roanoke Island colony in 1586–1587 (1301.1c)?", 
         correct: "Relief ships found the site deserted with the word 'Croatoan' carved on a post", 
         distractors: [
-          "Spanish naval forces landed and executed every inhabitant as illegal intruders", 
-          "A sudden tropical hurricane submerged the entire settlement beneath the sound", 
-          "The surviving colonists walked north and merged directly into early Jamestown"
+          "Spanish naval forces landed, bombarded the palisades, and executed every inhabitant as an intruder", 
+          "A sudden tropical hurricane completely submerged the entire settlement beneath Pamlico Sound", 
+          "The surviving colonists walked overland and merged directly into the early Jamestown settlement"
         ], 
         exp: "Relief ships returned in 1590 to find the colony deserted, with only the word 'Croatoan' carved into a wooden post." 
       },
@@ -574,31 +565,31 @@
         q: "What was John Smith’s primary leadership rule that saved Jamestown from collapse in 1608 (1301.1c)?", 
         correct: "'He that will not work shall not eat'", 
         distractors: [
-          "'Every gentleman must prospect for gold'", 
-          "'Peace with natives through trade alone'", 
-          "'Equal tract of fertile land for all'"
+          "'Every gentleman must prospect daily for gold and silver'", 
+          "'Maintain lasting peace with native tribes through trade alone'", 
+          "'Grant an equal forty-acre tract of fertile land to all'"
         ], 
         exp: "John Smith imposed military discipline and the rule 'Don't work, don't eat' to force gentleman colonists to build and plant." 
       },
       { 
         id: "q13", 
         q: "The brutal winter of 1609–1610 in Jamestown, where colonists were reduced to cannibalism, is known as (1301.1c):", 
-        correct: "The Starving Time", 
+        correct: "The Starving Time tragedy", 
         distractors: [
-          "The Great Awakening", 
-          "The Salem Winter", 
-          "Bacon's Winter"
+          "The Great Awakening revival", 
+          "The Salem Winter witchcraft", 
+          "Bacon's Winter rebellion"
         ], 
         exp: "During 'The Starving Time' in winter 1609–1610, food shortages killed the vast majority of Jamestown settlers." 
       },
       { 
         id: "q14", 
         q: "Which Puritan ideal emphasized that economic thrift, hard work, and business success were signs of God's favor (1301.2b)?", 
-        correct: "Puritan Work Ethic", 
+        correct: "Puritan Work Ethic ideal", 
         distractors: [
-          "Individualist Grace", 
-          "Scriptural Literacy", 
-          "Separation Doctrine"
+          "Individualist Grace doctrine", 
+          "Scriptural Literacy mandate", 
+          "Separation of Church and State"
         ], 
         exp: "The Puritan Work Ethic treated hard work and thrift as a personal calling, viewing prosperity as evidence of God's grace." 
       },
@@ -607,9 +598,9 @@
         q: "Why did Puritans place such a heavy institutional emphasis on public education and literacy (1301.2b)?", 
         correct: "Enabling every believer to read and comprehend the Bible for their salvation", 
         distractors: [
-          "Training elite naval officers to command transatlantic commercial merchant fleets", 
-          "Preparing young men for secular administrative careers in royal British courts", 
-          "Eliminating the need for ordained ministers and formal theological seminaries"
+          "Training elite naval officers to command transatlantic commercial merchant fleets in global routes", 
+          "Preparing young men for secular administrative careers in royal British courts and chancelleries", 
+          "Eliminating the need for ordained ministers and formal theological seminaries throughout New England"
         ], 
         exp: "Puritans prioritized literacy and schools so every believer could read and understand Scripture directly." 
       },
@@ -618,9 +609,9 @@
         q: "How did the religious outlook of Plymouth Separatists differ from Massachusetts Bay Puritans (1301.2a & 1301.2b)?", 
         correct: "Separatists broke from the Anglican Church, while Puritans sought reform from within", 
         distractors: [
-          "Separatists fully embraced Catholic rituals, while Puritans rejected all sacraments", 
-          "Puritans denied scriptural authority, while Separatists adhered to strict orthodoxy", 
-          "Separatists defended absolute royal supremacy, while Puritans established communism"
+          "Separatists fully embraced Catholic rituals and sacraments, while Puritans rejected all liturgy", 
+          "Puritans denied scriptural authority in daily governance, while Separatists adhered to strict biblical law", 
+          "Separatists defended absolute royal supremacy, while Puritans established communal property ownership"
         ], 
         exp: "Separatists (Pilgrims) completely severed ties with the Church of England; Non-Separatists (Puritans) worked to reform it by example." 
       },
@@ -629,9 +620,9 @@
         q: "King Philip’s War (1675–1678) ended with what major regional outcome (1301.2b)?", 
         correct: "Breaking Native power in southern New England and clearing land for expansion", 
         distractors: [
-          "Metacomet capturing Boston and driving English settlers back to their ships", 
-          "Converting all surviving regional tribes to orthodox Anglican ecclesiastical rule", 
-          "Prompting the British Crown to dissolve New England and abandon colonization"
+          "Metacomet capturing Boston, burning coastal shipping, and driving English settlers back to London", 
+          "Converting all surviving regional tribes to orthodox Anglican ecclesiastical rule and church governance", 
+          "Prompting the British Crown to dissolve New England and abandon colonization north of Long Island"
         ], 
         exp: "Metacomet's defeat and death broke armed Native resistance in southern New England, opening the region to colonial expansion." 
       },
@@ -640,9 +631,9 @@
         q: "What was the purpose of the British Woolens Act of 1699 (1301.2d)?", 
         correct: "Restricting colonial textile manufacturing to protect the English home market", 
         distractors: [
-          "Subsidizing sheep farming and wool processing in the southern Chesapeake region", 
-          "Mandating that Continental military regiments purchase only British wool coats", 
-          "Eliminating all import tariffs on finished woolen clothing across the colonies"
+          "Subsidizing sheep farming and industrial wool processing across the southern Chesapeake plantation region", 
+          "Mandating that Continental military regiments purchase only British manufactured wool coats and uniforms", 
+          "Eliminating all import tariffs and customs duties on finished woolen clothing imported into colonial ports"
         ], 
         exp: "The Woolens Act barred colonial wool from inter-colonial or transatlantic export, safeguarding England's textile industry." 
       },
@@ -651,9 +642,9 @@
         q: "What was the British policy of 'Salutary Neglect' regarding the American colonies prior to 1763 (1301.2d & 1301.3c)?", 
         correct: "Relaxing enforcement of trade laws as long as colonies stayed loyal and profitable", 
         distractors: [
-          "Imposing strict military martial law across major colonial ports and warehouses", 
-          "Placing an embargo on all colonial merchant ships traveling to the West Indies", 
-          "Refusing to deploy royal naval units to defend colonial waters against piracy"
+          "Imposing strict military martial law and continuous search operations across all major colonial ports", 
+          "Placing an embargo on all colonial merchant ships attempting to trade sugar in the French West Indies", 
+          "Refusing to deploy royal naval units to defend North American shipping corridors against armed piracy"
         ], 
         exp: "Under Salutary Neglect, Britain rarely enforced strict trade acts, allowing the colonies to develop self-government and flourish on smuggling." 
       },
@@ -662,9 +653,9 @@
         q: "William Pitt the Elder turned the Seven Years' (French and Indian) War in Britain’s favor by (1301.3a):", 
         correct: "Focusing naval forces on North America while subsidizing allies in Europe", 
         distractors: [
-          "Surrendering trans-Appalachian outposts to France to conserve British treasury funds", 
-          "Relying solely on local colonial provincial troops without regular British soldiers", 
-          "Appointing George Washington commander-in-chief of all British naval operations"
+          "Surrendering trans-Appalachian outposts to France to conserve British royal treasury funds and supplies", 
+          "Relying solely on local colonial provincial troops without deploying regular British infantry regiments", 
+          "Appointing George Washington supreme commander-in-chief of all British imperial naval operations"
         ], 
         exp: "Pitt's 'Blue Water Policy' prioritized North American operations while using British subsidies to keep European allies fighting France." 
       },
@@ -673,9 +664,9 @@
         q: "What was the main purpose of British 'Writs of Assistance' (1301.3c)?", 
         correct: "Granting customs officials non-specific search warrants for smuggled cargo", 
         distractors: [
-          "Authorizing housing allowances and salary subsidies for colonial royal governors", 
-          "Issuing privateering letters of marque to intercept French shipping during war", 
-          "Surveying and granting royal land patents across newly conquered western valleys"
+          "Authorizing housing allowances and executive salary subsidies for colonial royal governors in Boston", 
+          "Issuing privateering letters of marque to intercept and confiscate French merchant vessels at sea", 
+          "Surveying and granting royal land patents to military veterans across newly conquered western valleys"
         ], 
         exp: "Writs of Assistance allowed royal customs officers to search ships and warehouses without detailing specific items or probable cause." 
       },
@@ -684,9 +675,9 @@
         q: "Why was the Stamp Act of 1765 so fiercely resisted compared to the earlier Sugar Act (1301.3d)?", 
         correct: "It was an internal direct tax on domestic legal documents without colonial consent", 
         distractors: [
-          "It applied exclusively to wealthy southern plantation owners and commercial farmers", 
-          "It doubled customs import duties on foreign Dutch rum arriving at northern ports", 
-          "It required all printed newspaper material to be manufactured directly in London"
+          "It applied exclusively to wealthy southern plantation owners, exempting northern merchants entirely", 
+          "It doubled customs import duties on foreign Dutch rum and molasses arriving at New England seaports", 
+          "It required all legal paper and newspapers to be physically printed and bound inside shops in London"
         ], 
         exp: "The Stamp Act was Parliament's first direct internal tax, sparking resistance because colonies had no direct voice in Parliament." 
       },
@@ -695,9 +686,9 @@
         q: "What unified colonial action was taken to oppose the 1765 Stamp Act (1301.3d)?", 
         correct: "Convening the Stamp Act Congress to coordinate petitions and economic boycotts", 
         distractors: [
-          "Meeting at Philadelphia to author and ratify the first national constitution", 
-          "Drafting and delivering the Olive Branch Petition directly to King George III", 
-          "Raising a Continental Army under George Washington to garrison major seaports"
+          "Meeting in secret at Philadelphia to author, sign, and ratify the first national constitution", 
+          "Drafting and delivering the Olive Branch Petition directly to King George III seeking reconciliation", 
+          "Raising a Continental Army under George Washington to garrison and defend major Atlantic seaports"
         ], 
         exp: "Delegates met at the Stamp Act Congress in New York to issue declarations of rights and coordinate boycotts of British goods." 
       },
@@ -706,20 +697,20 @@
         q: "What did Parliament declare in the 1766 Declaratory Act after repealing the Stamp Act (1301.3d)?", 
         correct: "Asserting absolute parliamentary power to bind the colonies 'in all cases whatsoever'", 
         distractors: [
-          "Granting American colonial assemblies full independence over their internal taxes", 
-          "Abolishing all imperial duties on tea, glass, paper, and molasses permanently", 
-          "Authorizing unrestricted colonial migration and land settlement across the Ohio"
+          "Granting American colonial assemblies full legislative independence over all internal revenue taxes", 
+          "Abolishing all imperial duties on imported tea, glass, paper, and molasses across the Atlantic trade", 
+          "Authorizing unrestricted colonial migration and private land settlement across the trans-Ohio frontier"
         ], 
         exp: "The Declaratory Act reaffirmed Parliament's total legislative authority over the American colonies in all cases whatsoever." 
       },
       { 
         id: "q25", 
         q: "Who stepped forward to legally defend the British soldiers accused of murder in the 1770 Boston Massacre (1301.3e)?", 
-        correct: "John Adams", 
+        correct: "Attorney John Adams of Massachusetts", 
         distractors: [
-          "Samuel Adams", 
-          "Patrick Henry", 
-          "Thomas Paine"
+          "Sons of Liberty leader Samuel Adams", 
+          "Virginia burgess orator Patrick Henry", 
+          "Common Sense author Thomas Paine"
         ], 
         exp: "John Adams defended Captain Preston and the soldiers to demonstrate that Massachusetts respected due process and the rule of law." 
       },
@@ -728,9 +719,9 @@
         q: "The Edenton Tea Party of 1774 was significant because it was (1301.3e):", 
         correct: "A public non-consumption boycott of British goods signed by 51 North Carolina women", 
         distractors: [
-          "A midnight raid conducted by Sons of Liberty disguised as indigenous Mohawk warriors", 
-          "The first naval engagement where armed colonial schooners captured British merchant ships", 
-          "A secret assembly of southern delegates gathering to declare complete national independence"
+          "A midnight raid conducted by Sons of Liberty disguised as indigenous Mohawk warriors in Boston", 
+          "The first naval engagement where armed colonial privateers captured British royal merchant vessels", 
+          "A secret assembly of southern colonial delegates gathering to declare complete national independence"
         ], 
         exp: "The Edenton Tea Party was a political action by women pledging non-consumption of British tea and textiles." 
       },
@@ -739,9 +730,9 @@
         q: "How did King George III respond to the Second Continental Congress’s 1775 Olive Branch Petition (1301.4a)?", 
         correct: "Rejecting the petition and issuing the Proclamation of Rebellion against the colonies", 
         distractors: [
-          "Accepting the petition and ordering all British garrison troops to withdraw from Boston", 
-          "Offering colonial assemblies direct seating and voting representation in Parliament", 
-          "Appointing Benjamin Franklin to serve as royal administrative chancellor for America"
+          "Accepting the petition and ordering all British regular infantry regiments to withdraw from Boston", 
+          "Offering colonial assemblies direct seating, parliamentary debate, and voting representation in London", 
+          "Appointing Benjamin Franklin to serve as royal administrative chancellor for all thirteen colonies"
         ], 
         exp: "King George III rejected the petition and proclaimed the colonies to be in open, armed rebellion." 
       },
@@ -750,9 +741,9 @@
         q: "What role did Baron Friedrich von Steuben play for the Continental Army at Valley Forge (1301.4a & 1301.4c)?", 
         correct: "Drilling troops in uniform tactics and instituting standard camp sanitation rules", 
         distractors: [
-          "Securing large diplomatic loans and naval warships directly from the Spanish Crown", 
-          "Authoring the Northwest Ordinance to manage lands won during the western campaigns", 
-          "Leading frontline cavalry charges that recaptured Philadelphia from British forces"
+          "Securing massive foreign financial loans and regular line-of-battle warships directly from Spain", 
+          "Authoring the Northwest Ordinance to organize and govern western territories won during the war", 
+          "Leading frontline cavalry regiments that broke the British lines and recaptured central Philadelphia"
         ], 
         exp: "Von Steuben drilled the army, established camp sanitation, and taught standardized bayonet and tactical maneuvers." 
       },
@@ -761,9 +752,9 @@
         q: "Thomas Paine's 1776 pamphlet 'Common Sense' was effective because it (1301.4b):", 
         correct: "Used straightforward language to dismantle hereditary monarchy and urge independence", 
         distractors: [
-          "Lobbied for immediate reconciliation with King George III under relaxed trade duties", 
-          "Presented complex theological arguments in classical Latin for educated colonial elites", 
-          "Argued against forming a unified Continental Army to avoid federal military tyranny"
+          "Lobbied for immediate political reconciliation with King George III under relaxed trade duties", 
+          "Presented complex theological discourses written in classical Latin for educated colonial clergymen", 
+          "Argued against forming a unified Continental Army to avoid the dangers of federal military tyranny"
         ], 
         exp: "Paine used accessible, clear language to dismantle the idea of monarchy and urge ordinary Americans to choose independence." 
       },
@@ -772,9 +763,9 @@
         q: "George Washington's primary military strategy throughout the Revolutionary War was to (1301.4c):", 
         correct: "Wage a war of attrition, keeping his army intact to outlast British political will", 
         distractors: [
-          "Defend every major colonial coastal port city against British amphibious assaults", 
-          "Rely entirely on mountain guerrilla militias without using regular infantry units", 
-          "Launch an immediate invasion of Montreal and Quebec to capture Canadian supplies"
+          "Defend every major colonial coastal port city against British amphibious assaults and blockades", 
+          "Rely entirely on decentralized frontier militias without maintaining a regular continental line", 
+          "Launch an immediate full-scale invasion of Canada to seize royal weapons arsenals and naval supplies"
         ], 
         exp: "Washington knew that as long as the Continental Army survived in the field, the Revolution would continue." 
       },
@@ -783,9 +774,9 @@
         q: "The Land Ordinance of 1785 resolved western territorial disputes by (1301.5a):", 
         correct: "Surveying land into rectangular townships and setting aside Section 16 for schools", 
         distractors: [
-          "Permitting unrestricted squatter claims across Ohio without federal survey records", 
-          "Banning all commercial farming and private timber harvesting in the western valleys", 
-          "Ceding all trans-Appalachian territorial claims directly back to Virginia and Maryland"
+          "Permitting unrestricted squatter claims across Ohio without requiring federal survey documentation", 
+          "Banning all commercial farming, private mining, and timber operations across western river valleys", 
+          "Ceding all trans-Appalachian territorial claims directly back to Virginia, Maryland, and New York"
         ], 
         exp: "The Land Ordinance of 1785 created a grid survey system and set aside Section 16 in every township to fund public education." 
       },
@@ -794,9 +785,9 @@
         q: "What was a major requirement established by the Northwest Ordinance of 1787 for statehood (1301.5a)?", 
         correct: "Reaching 60,000 free residents, drafting a state constitution, and banning slavery", 
         distractors: [
-          "Requiring all territorial residents to maintain lifetime chattel slavery contracts", 
-          "Paying an accession entry fee of one million dollars directly to the federal treasury", 
-          "Agreeing to govern state affairs under a unicameral assembly without judicial courts"
+          "Requiring all territorial residents to maintain lifetime indenture contracts for agricultural labor", 
+          "Paying an accession admission fee of one million gold dollars directly into the national treasury", 
+          "Agreeing to govern all provincial civil matters under a unicameral assembly without judicial courts"
         ], 
         exp: "The Northwest Ordinance created a statehood process at 60,000 free residents and barred slavery north of the Ohio River." 
       },
@@ -805,9 +796,9 @@
         q: "What caused the Rhode Island Currency Crisis under the Articles of Confederation (1301.5b)?", 
         correct: "Printing excessive paper money and forcing creditors to accept it at face value", 
         distractors: [
-          "Experiencing an acute physical shortage of paper notes that stopped local trade", 
-          "Having all municipal gold and silver reserves seized by the national military", 
-          "Suffering retaliatory British maritime tariffs that bankrupted Providence merchants"
+          "Experiencing an acute physical shortage of silver and gold specie that completely paralyzed commerce", 
+          "Having all commercial banking reserves seized by federal infantry under orders from the Congress", 
+          "Suffering retaliatory British maritime tariffs that instantly bankrupted all Providence merchants"
         ], 
         exp: "Rhode Island printed unbacked paper money to discharge farm debts, punishing creditors who refused to accept it." 
       },
@@ -816,9 +807,9 @@
         q: "Shays’ Rebellion (1786–1787) in Massachusetts was sparked by (1301.5b):", 
         correct: "Indebted farmers facing property foreclosures and imprisonment for unpaid taxes", 
         distractors: [
-          "Colonial merchants protesting new British customs duties on imported molasses", 
-          "Frontier settlers attempting to declare independence and rejoin the British Empire", 
-          "Urban laborers protesting the anti-slavery clauses inside the Northwest Ordinance"
+          "Colonial merchants protesting new British imperial customs duties on imported Caribbean molasses", 
+          "Frontier settlers attempting to declare regional independence and rejoin the British Crown in Canada", 
+          "Urban artisans protesting the strict prohibition of slavery written into the Northwest Ordinance"
         ], 
         exp: "Daniel Shays led indebted farmers against court foreclosures and property seizures for unpaid state taxes." 
       },
@@ -827,9 +818,9 @@
         q: "What was the most important political consequence of Shays’ Rebellion (1301.5b & 1301.5c)?", 
         correct: "Exposing federal weakness, providing momentum to convene the Philadelphia Convention", 
         distractors: [
-          "Proving that the Articles of Confederation maintained order effectively across states", 
-          "Convincing Massachusetts authorities to abolish all property taxes and court fees", 
-          "Triggering an immediate frontier border war between the United States and Spain"
+          "Proving that the Articles of Confederation maintained order effectively during domestic insurrections", 
+          "Convincing Massachusetts state authorities to abolish all real estate property taxes permanently", 
+          "Triggering an immediate frontier border war between the United States and Spanish troops in Florida"
         ], 
         exp: "The uprising alarmed political leaders, showing the national government was too weak to protect order or property." 
       },
@@ -838,9 +829,9 @@
         q: "What was the purpose of the 1785 Mount Vernon Conference (1301.5c)?", 
         correct: "Resolving Potomac River commercial navigation disputes between Maryland and Virginia", 
         distractors: [
-          "Drafting an initial draft of the Declaration of Independence prior to revolution", 
-          "Organizing supply lines and troop recruitment quotas for the Continental Army", 
-          "Debating the inclusion of the first ten amendments inside the national constitution"
+          "Drafting the preliminary working framework of the Declaration of Independence prior to the war", 
+          "Organizing continental supply lines and uniform ammunition quotas for George Washington's troops", 
+          "Debating the specific wording of the first ten constitutional amendments for the Bill of Rights"
         ], 
         exp: "The meeting at George Washington's home resolved Potomac trade disputes and paved the way for the Annapolis Convention." 
       },
@@ -849,9 +840,9 @@
         q: "What did the 1786 Annapolis Convention accomplish despite its low turnout (1301.5c)?", 
         correct: "Securing a call by Hamilton for a general convention in Philadelphia to revise government", 
         distractors: [
-          "Drafting and publishing the complete text of the United States Constitution", 
-          "Formally abolishing the unicameral Confederation Congress and creating the Senate", 
-          "Chartering the first Bank of the United States to stabilize fluctuating currency"
+          "Drafting and publishing the complete, finalized working draft of the United States Constitution", 
+          "Formally abolishing the unicameral Confederation Congress and establishing the executive branch", 
+          "Chartering the first Bank of the United States to regulate and stabilize fluctuating paper notes"
         ], 
         exp: "Though only five states attended, Hamilton secured an agreement to convene all states at Philadelphia to revise the Articles." 
       },
@@ -860,9 +851,9 @@
         q: "James Madison's Virginia Plan favored large states by proposing (1301.6a):", 
         correct: "A bicameral legislature where representation in both houses was based on population", 
         distractors: [
-          "A unicameral legislature where each state received one vote regardless of population", 
-          "An executive branch chosen directly and exclusively by sitting state governors", 
-          "A federal judiciary appointed directly by small-state legislative assemblies"
+          "A unicameral legislature where each state received one vote regardless of population or wealth", 
+          "An executive branch chosen directly and exclusively by a majority council of sitting state governors", 
+          "A federal judiciary appointed directly by small-state legislative assemblies without confirmation"
         ], 
         exp: "The Virginia Plan proposed a bicameral legislature with both houses apportioned by population, benefiting larger states." 
       },
@@ -871,9 +862,9 @@
         q: "William Paterson's New Jersey Plan proposed (1301.6a):", 
         correct: "A unicameral legislature preserving equal voting representation for every state", 
         distractors: [
-          "A lifetime hereditary monarchy assisted by an appointed executive privy council", 
-          "A two-chamber legislature apportioning representation strictly by taxable wealth", 
-          "A complete dissolution of state boundaries into one consolidated national district"
+          "A lifetime hereditary monarchy assisted by an appointed executive privy council of state judges", 
+          "A two-chamber legislature apportioning seats strictly according to state real estate valuation", 
+          "A complete dissolution of individual state borders into one unified national administrative district"
         ], 
         exp: "The New Jersey Plan defended small states by keeping a unicameral legislature with one vote per state." 
       },
@@ -882,9 +873,9 @@
         q: "How did the Three-Fifths Compromise resolve disputes between northern and southern delegates (1301.6b)?", 
         correct: "Counting three-fifths of enslaved persons for congressional representation and direct taxes", 
         distractors: [
-          "Mandating that three-fifths of all enslaved agricultural laborers be emancipated by 1808", 
-          "Reserving three-fifths of all seats in the United States Senate exclusively for southern states", 
-          "Imposing an export tariff of three-fifths value on all cotton and tobacco leaving southern ports"
+          "Mandating that three-fifths of all enslaved agricultural laborers be emancipated unconditionally by 1808", 
+          "Reserving three-fifths of all seats in the United States Senate exclusively for southern slaveholding states", 
+          "Imposing an export tariff of three-fifths value on all raw cotton and tobacco leaving southern seaports"
         ], 
         exp: "The compromise counted five enslaved persons as three free persons for determining House seats and direct taxes." 
       },
@@ -893,9 +884,9 @@
         q: "What was agreed to in the Slave Trade Compromise at the 1787 Constitutional Convention (1301.6b)?", 
         correct: "Barring Congress from banning the transatlantic slave trade for twenty years (until 1808)", 
         distractors: [
-          "Outlawing chattel slavery permanently across all newly organized western federal territories", 
-          "Placing interstate trade of enslaved persons under the immediate regulatory control of Congress", 
-          "Prohibiting enslaved persons from ever being counted in the federal decennial census"
+          "Outlawing chattel slavery permanently across all newly organized western federal territories and states", 
+          "Placing interstate trade of enslaved persons under the immediate regulatory control of the federal Congress", 
+          "Prohibiting enslaved persons from ever being enumerated or counted in the federal decennial population census"
         ], 
         exp: "Southern delegates from SC and GA protected their supply by preventing Congress from banning the transatlantic slave trade until 1808." 
       },
@@ -904,9 +895,9 @@
         q: "Why did the Framers create the Electoral College system (1301.6c)?", 
         correct: "Establishing an indirect election system balancing state weight against direct mob rule", 
         distractors: [
-          "Granting sitting senators absolute authority to select the president of the United States", 
-          "Guaranteeing that only sitting state governors could stand for election as chief executive", 
-          "Fulfilling Anti-Federalist demands for mandatory yearly rotations in national office"
+          "Granting sitting senators absolute constitutional authority to select the president of the United States", 
+          "Guaranteeing that only sitting state governors could stand for election as the national chief executive", 
+          "Fulfilling Anti-Federalist demands for mandatory yearly rotations and term limits in national executive office"
         ], 
         exp: "The Electoral College balanced state power while creating a buffer between direct popular voting and executive selection." 
       },
@@ -915,9 +906,9 @@
         q: "What does the Supremacy Clause in Article VI of the U.S. Constitution establish (1301.6c)?", 
         correct: "The federal Constitution, statutes, and treaties are the supreme law of the land", 
         distractors: [
-          "State constitutional statutes override federal legislation whenever commerce is local", 
-          "The President of the United States holds authority to invalidate Supreme Court rulings", 
-          "State legislatures retain sovereign power to nullify international treaties at will"
+          "State constitutional statutes override federal legislation whenever commercial regulations affect local trade", 
+          "The President of the United States holds emergency authority to invalidate Supreme Court constitutional rulings", 
+          "State legislatures retain sovereign legal power to nullify international treaties ratified by the Senate"
         ], 
         exp: "Article VI states that the Constitution and federal laws override conflicting state laws." 
       },
@@ -926,9 +917,9 @@
         q: "What was the Anti-Federalists' primary argument against ratifying the 1787 Constitution?", 
         correct: "It gave excessive power to the national government and lacked a protective Bill of Rights", 
         distractors: [
-          "It left the national government too weak to raise revenue or enforce maritime treaties", 
-          "It failed to establish a permanent military alliance with the revolutionary French Crown", 
-          "It placed the permanent federal capital too far south along the marshy Potomac River"
+          "It left the national government too weak to raise revenue, collect tariffs, or enforce maritime treaties", 
+          "It failed to establish a permanent offensive military alliance with the revolutionary French Crown in Paris", 
+          "It placed the permanent federal capital city too far south along the marshy banks of the Potomac River"
         ], 
         exp: "Anti-Federalists feared centralized tyranny and opposed the Constitution because it initially lacked a Bill of Rights." 
       },
@@ -937,9 +928,9 @@
         q: "What was the primary purpose of the Federalist Papers written by Hamilton, Madison, and Jay?", 
         correct: "Persuading citizens, especially in New York, to ratify the newly proposed Constitution", 
         distractors: [
-          "Drafting formal diplomatic peace terms to conclude the Revolutionary War with Great Britain", 
-          "Proposing constitutional revisions to restore sovereign powers to the Articles of Confederation", 
-          "Lobbying Congress against the immediate adoption of the first ten constitutional amendments"
+          "Drafting formal diplomatic peace terms to conclude the Revolutionary War hostilities with Great Britain", 
+          "Proposing constitutional revisions to restore sovereign powers back to the Articles of Confederation", 
+          "Lobbying Congress against the immediate adoption and inclusion of the first ten constitutional amendments"
         ], 
         exp: "The Federalist Papers explained how the Constitution would work and argued for its ratification in key states like New York." 
       },
@@ -948,9 +939,9 @@
         q: "Which protection is guaranteed under the First Amendment of the Bill of Rights?", 
         correct: "Freedoms of speech, religion, press, assembly, and petition", 
         distractors: [
-          "The constitutional right to keep and bear military-style arms", 
-          "Protection against being prosecuted twice under double jeopardy", 
-          "Freedom from the forced quartering of military soldiers in homes"
+          "The constitutional right to maintain armed state militias and bear personal weapons", 
+          "Protection against being prosecuted twice for the same offense under double jeopardy", 
+          "Freedom from the compulsory quartering of military soldiers in private civilian homes"
         ], 
         exp: "The First Amendment protects the freedoms of speech, religion, the press, assembly, and petition." 
       },
@@ -959,9 +950,9 @@
         q: "What protection is established by the Fourth Amendment?", 
         correct: "Protecting against unreasonable searches and seizures without probable cause warrants", 
         distractors: [
-          "Guaranteeing a speedy and public trial by an impartial jury in all criminal matters", 
-          "Prohibiting excessive bail fines and cruel and unusual punishments in federal courts", 
-          "Ensuring the absolute right to trial by jury in common-law civil litigation matters"
+          "Guaranteeing a speedy and public trial by an impartial jury in all federal criminal prosecutions", 
+          "Prohibiting excessive bail fines and cruel and unusual punishments during civilian judicial trials", 
+          "Ensuring the absolute constitutional right to trial by jury in common-law civil litigation suits"
         ], 
         exp: "The Fourth Amendment requires warrants backed by probable cause and protects citizens from unreasonable searches." 
       },
@@ -970,9 +961,9 @@
         q: "The Fifth Amendment provides all of the following constitutional protections EXCEPT:", 
         correct: "Right to a speedy trial with a state-appointed defense attorney", 
         distractors: [
-          "Protection against being prosecuted twice for the identical criminal charge", 
-          "Protection against forced self-incrimination in legal proceedings", 
-          "Guarantee that no person is deprived of liberty without due process"
+          "Protection against being prosecuted twice for the identical criminal charge in court", 
+          "Protection against forced self-incrimination during government legal proceedings", 
+          "Guarantee that no person is deprived of life, liberty, or property without due process"
         ], 
         exp: "The right to a speedy public trial and defense counsel is guaranteed under the Sixth Amendment, not the Fifth." 
       },
@@ -981,9 +972,9 @@
         q: "What does the Tenth Amendment declare regarding government power?", 
         correct: "Non-delegated powers are reserved to the states, or to the people", 
         distractors: [
-          "The federal national government retains supreme unchallengeable sovereignty", 
-          "Individual states are prohibited from organizing armed defensive militias", 
-          "All federal common-law civil trials must include twelve voting jurors"
+          "The federal national government retains supreme unchallengeable sovereign administrative power", 
+          "Individual states are constitutionally prohibited from organizing and training armed militias", 
+          "All federal common-law civil trials exceeding twenty dollars must include twelve voting jurors"
         ], 
         exp: "The Tenth Amendment limits the federal government by reserving non-delegated powers to the states or the people." 
       },
@@ -992,53 +983,53 @@
         q: "The Sugar Act of 1764 differed from earlier Molasses Acts because it was designed to (1301.3d):", 
         correct: "Collect revenue by halving duties while strictly prosecuting smugglers in admiralty courts", 
         distractors: [
-          "Encourage widespread smuggling of French Caribbean molasses to benefit Boston distilleries", 
-          "Outlaw the domestic production and distribution of rum across all New England colonies", 
-          "Provide direct imperial crown subsidies to struggling French sugarcane plantation estates"
+          "Encourage widespread smuggling of French Caribbean molasses to benefit Boston rum distilleries", 
+          "Outlaw the domestic production, sale, and distribution of distilled rum across New England colonies", 
+          "Provide direct imperial crown subsidies to struggling French sugarcane plantation estates in Haiti"
         ], 
         exp: "The Sugar Act lowered the tax rate to deter smuggling, but enforced collections strictly through vice-admiralty courts." 
       },
       { 
         id: "q51", 
         q: "What were the 'Three G's' that drove early European exploration and colonization of the Americas?", 
-        correct: "Gold, Glory, and God", 
+        correct: "Imperial pursuits of Gold, Glory, and God", 
         distractors: [
-          "Guns, Grain, and Government", 
-          "Growth, Geography, and Guilds", 
-          "Garrison, Goods, and Grace"
+          "Strategic goals of Guns, Grain, and Government", 
+          "Commercial aims of Growth, Geography, and Guilds", 
+          "Military policies of Garrison, Goods, and Grace"
         ], 
         exp: "Gold (wealth), Glory (national prestige), and God (religious conversion) drove European exploration." 
       },
       { 
         id: "q52", 
         q: "What type of British colony was established and owned by an individual or family under a royal land grant?", 
-        correct: "Proprietary colony", 
+        correct: "Proprietary colonial land grant", 
         distractors: [
-          "Chartered colony", 
-          "Crown royal colony", 
-          "Federal domain"
+          "Joint-stock chartered corporation", 
+          "Crown royal administrative domain", 
+          "Provincial parliamentary territory"
         ], 
         exp: "Proprietary colonies (such as Maryland and Pennsylvania) were granted by the Crown to individuals or families to govern." 
       },
       { 
         id: "q53", 
         q: "What type of British colony was governed under direct crown rule through a royally appointed governor?", 
-        correct: "Royal colony", 
+        correct: "Royal crown-administered colony", 
         distractors: [
-          "Proprietary estate", 
-          "Corporate charter", 
-          "Colonial union"
+          "Private proprietary family estate", 
+          "Corporate charter joint-stock post", 
+          "Self-governing colonial confederacy"
         ], 
         exp: "Royal colonies were governed directly by the English Crown through royally appointed governors." 
       },
       { 
         id: "q54", 
         q: "What type of British colony was established by an explicit contract or joint-stock enterprise granted by the crown?", 
-        correct: "Charter colony", 
+        correct: "Charter joint-stock company colony", 
         distractors: [
-          "Proprietary tract", 
-          "Direct royal domain", 
-          "Parliamentary ward"
+          "Proprietary aristocratic tract domain", 
+          "Direct royal executive crown province", 
+          "Parliamentary military garrison ward"
         ], 
         exp: "Charter colonies operated under a formal charter granted by the Crown to a joint-stock company or group of settlers." 
       },
@@ -1047,9 +1038,9 @@
         q: "What was the Iroquois Confederacy (Haudenosaunee)?", 
         correct: "A powerful alliance of Five (later Six) northeastern Native nations with a unified council", 
         distractors: [
-          "A Catholic missionary network establishing Spanish defensive presidios along the Florida gulf", 
-          "A military coalition organized by the Powhatan to drive Jamestown colonists back to England", 
-          "A joint-stock trading company chartered in London to manage early Massachusetts fur commerce"
+          "A Catholic missionary network establishing Spanish defensive presidios along the Florida coastline", 
+          "A military coalition organized by the Powhatan to drive Jamestown colonists back to their ships", 
+          "A joint-stock trading company chartered in London to manage early Massachusetts fur trading posts"
         ], 
         exp: "The Iroquois Confederacy united Six Nations across upstate New York, using diplomacy and trade to hold regional power." 
       },
@@ -1058,9 +1049,9 @@
         q: "What was the demographic consequence of European epidemic diseases (such as smallpox) on Native populations?", 
         correct: "Mortality rates reaching up to 90% due to a complete lack of acquired immunities", 
         distractors: [
-          "Negligible mortality impacts because indigenous medicinal treatments cured Old World viruses", 
-          "A rapid biological population increase driven by improved resistance to domestic livestock", 
-          "Severe health complications confined exclusively to Caribbean island communities without spreading"
+          "Negligible mortality impacts because indigenous herbal remedies neutralized Old World viral strains", 
+          "A rapid biological population increase driven by improved resistance to domestic European livestock", 
+          "Severe health complications confined exclusively to Caribbean islands without spreading to the mainland"
         ], 
         exp: "Lacking immunity to Old World diseases like smallpox, Native populations saw catastrophic mortality rates up to 90%." 
       },
@@ -1069,20 +1060,20 @@
         q: "John Rolfe’s 1614 marriage to Pocahontas was politically significant because it (1301.1c):", 
         correct: "Fostered diplomatic peace between the Powhatan Confederacy and Jamestown", 
         distractors: [
-          "Brought an immediate end to the Starving Time by providing access to native food stores", 
-          "Transferred formal English legal title over all Virginia territory directly to Chief Powhatan", 
-          "Prompted the Virginia Company to abolish the House of Burgesses and install royal governance"
+          "Brought an immediate end to the Starving Time by providing access to native stored grain reserves", 
+          "Transferred formal English legal title over all Virginia territory directly to Chief Powhatan's council", 
+          "Prompted the Virginia Company to abolish the House of Burgesses and install direct crown management"
         ], 
         exp: "The marriage of Rolfe and Pocahontas brought an era of peace between the Powhatan and the English settlement." 
       },
       { 
         id: "q58", 
         q: "Who was the royal governor of Virginia whose frontier policies sparked Bacon's Rebellion (1301.1d)?", 
-        correct: "William Berkeley", 
+        correct: "Royal Governor William Berkeley", 
         distractors: [
-          "Nathaniel Bacon", 
-          "Thomas Gage", 
-          "Edmund Andros"
+          "Rebel planter Nathaniel Bacon Jr.", 
+          "British military general Thomas Gage", 
+          "Dominion governor Sir Edmund Andros"
         ], 
         exp: "Governor William Berkeley refused to support frontier settlers against Native tribes, sparking Nathaniel Bacon's revolt." 
       },
@@ -1091,20 +1082,20 @@
         q: "What legal change was codified in the Virginia Slave Codes of 1705 (1301.1d & 1301.2c)?", 
         correct: "Defining enslaved people as chattel property with inherited maternal status", 
         distractors: [
-          "Prohibiting all transatlantic shipments of enslaved African laborers into Chesapeake ports", 
-          "Providing mandatory legal manumission to any enslaved worker completing seven years of service", 
-          "Mandating that plantation owners pay equal monetary wages to European and African laborers"
+          "Prohibiting all transatlantic shipments of enslaved African laborers into Chesapeake regional seaports", 
+          "Providing mandatory legal manumission to any enslaved worker completing seven years of agricultural service", 
+          "Mandating that plantation owners pay equal monetary wages to European indentures and enslaved workers"
         ], 
         exp: "The 1705 codes cemented chattel slavery into law, stripping enslaved people of rights and making status hereditary." 
       },
       { 
         id: "q60", 
         q: "Which group of English religious migrants wished to purify the Church of England from within rather than leave it (1301.2b)?", 
-        correct: "Non-Separatist Puritans", 
+        correct: "Non-Separatist Massachusetts Puritans", 
         distractors: [
-          "Separatist Pilgrims", 
-          "Quaker Pacifists", 
-          "Roman Catholics"
+          "Separatist Plymouth Pilgrim Brethren", 
+          "Quaker Pacifist Society of Friends", 
+          "Roman Catholic English Recusants"
         ], 
         exp: "Puritans sought to eliminate remaining Catholic practices from within the Church of England without separating entirely." 
       },
@@ -1113,9 +1104,9 @@
         q: "John Winthrop's sermon describing Massachusetts Bay as a 'City on a Hill' meant the colony should (1301.2b):", 
         correct: "Model a pious, reformed Christian commonwealth for the Old World to emulate", 
         distractors: [
-          "Construct massive stone ramparts atop high elevations to resist French naval attacks", 
-          "Remain culturally isolated from all transatlantic commerce and maritime trade routes", 
-          "Provide an open sanctuary granting universal religious toleration to all religious sects"
+          "Construct massive stone fortifications atop high elevations to resist French naval bombardments", 
+          "Remain culturally and economically isolated from all transatlantic shipping routes and global commerce", 
+          "Provide an open geographic haven granting universal religious toleration to every theological sect"
         ], 
         exp: "Winthrop described the colony as a 'City on a Hill' to model a reformed Christian society for England and the world." 
       },
@@ -1124,9 +1115,9 @@
         q: "Which event is celebrated in American popular culture as the 'First Thanksgiving' in 1621 (1301.2a)?", 
         correct: "A shared autumn harvest gathering between Plymouth Pilgrims and the Wampanoag", 
         distractors: [
-          "The safe landing of the Susan Constant, Godspeed, and Discovery in the James River", 
-          "The signing of the peace treaty formally concluding the bloodshed of King Philip's War", 
-          "The formal signing of the Mayflower Compact aboard the ship while anchored off Cape Cod"
+          "The safe landing of the Susan Constant, Godspeed, and Discovery in the waters of the James River", 
+          "The signing of the formal peace treaty concluding the widespread bloodshed of King Philip's War", 
+          "The formal drafting of the Mayflower Compact aboard the ship while anchored off the tip of Cape Cod"
         ], 
         exp: "In autumn 1621, Plymouth settlers and the Wampanoag shared a three-day harvest gathering." 
       },
@@ -1135,20 +1126,20 @@
         q: "Did the Puritans of Massachusetts Bay practice open religious freedom for dissidents (1301.2b)?", 
         correct: "No, enforcing theological conformity and exiling dissenters like Roger Williams", 
         distractors: [
-          "Yes, welcoming diverse theological perspectives and fostering universal religious liberty", 
-          "Yes, mandating the total constitutional separation of church governance from state authority", 
-          "No, restricting public worship exclusively to Roman Catholic liturgical Latin ceremonies"
+          "Yes, welcoming diverse theological perspectives and fostering universal religious and civil liberty", 
+          "Yes, mandating the total constitutional separation of church ecclesiastical councils from state law", 
+          "No, restricting public worship exclusively to Roman Catholic liturgical Latin ceremonies in parish halls"
         ], 
         exp: "Puritans sought religious freedom for themselves, but tolerated no dissent, banishing reformers like Williams and Hutchinson." 
       },
       { 
         id: "q64", 
         q: "What was the brutal sea journey across the Atlantic endured by enslaved Africans called (1301.2c)?", 
-        correct: "The Middle Passage", 
+        correct: "The Middle Passage sea voyage", 
         distractors: [
-          "The Columbian Route", 
-          "The Triangular Transit", 
-          "The Northwest Passage"
+          "The Columbian Exchange maritime route", 
+          "The Triangular Transit shipping line", 
+          "The Northwest Passage Arctic channel"
         ], 
         exp: "The Middle Passage was the horrific second leg of the Triangular Trade, where millions of enslaved Africans were forced across the Atlantic." 
       },
@@ -1157,9 +1148,9 @@
         q: "In the Triangular Trade system, what was typically transported from the American colonies to Europe (1301.2c)?", 
         correct: "Raw agricultural staples and cash crops such as tobacco, sugar, and timber", 
         distractors: [
-          "Enslaved human laborers, raw gold bullion, and carved ivory tusks from the African coast", 
-          "Manufactured woolen textiles, iron firearms, and gunpowder cartridges produced in factories", 
-          "Exotic spices, silk garments, and fine porcelain dinnerware imported from East Indian markets"
+          "Enslaved human laborers, refined gold bullion, and carved ivory tusks purchased along the African coast", 
+          "Manufactured woolen textiles, iron firearms, and gunpowder cartridges produced inside domestic factories", 
+          "Exotic spices, fine silk fabrics, and porcelain dinnerware imported from East Indian merchant markets"
         ], 
         exp: "Colonial North America supplied raw commodities and cash crops to European markets." 
       },
@@ -1168,31 +1159,31 @@
         q: "What was the core goal of European mercantilist economic theory (1301.2d)?", 
         correct: "Achieving imperial wealth via favorable trade balances and bullion reserves", 
         distractors: [
-          "Establishing global free-market trade agreements free from tariffs and trade restrictions", 
-          "Dismantling state-chartered trading monopolies to foster decentralized consumer competition", 
-          "Eliminating domestic merchant shipping fleets in favor of lower-cost foreign transport"
+          "Establishing global free-market trade agreements completely free from tariffs and customs duties", 
+          "Dismantling state-chartered trading monopolies to foster decentralized competitive consumer pricing", 
+          "Eliminating domestic merchant fleets in favor of lower-cost foreign transport from competitor empires"
         ], 
         exp: "Mercantilism argued that national strength rested on accumulating bullion through exports and exclusive colonial markets." 
       },
       { 
         id: "q67", 
         q: "The French and Indian War (1754–1763) began over competing French and British claims to the (1301.3a):", 
-        correct: "Ohio River Valley", 
+        correct: "The contested Ohio River Valley", 
         distractors: [
-          "Hudson Bay Coastline", 
-          "St. Lawrence Estuary", 
-          "Florida Peninsula"
+          "The subarctic Hudson Bay coastline", 
+          "The St. Lawrence commercial estuary", 
+          "The subtropical Florida peninsula"
         ], 
         exp: "Clashes over lucrative fur trade and land speculation in the upper Ohio River Valley ignited the French and Indian War." 
       },
       { 
         id: "q68", 
         q: "What was the European theater of the French and Indian War known as historically (1301.3a)?", 
-        correct: "The Seven Years' War", 
+        correct: "The Seven Years' War conflict", 
         distractors: [
-          "War of Spanish Succession", 
-          "The Thirty Years' War", 
-          "War of Jenkins' Ear"
+          "The War of the Spanish Succession", 
+          "The Thirty Years' Religious War", 
+          "The War of Jenkins' Ear skirmish"
         ], 
         exp: "The worldwide conflict between Britain and France (1756–1763) was called the Seven Years' War in Europe." 
       },
@@ -1201,9 +1192,9 @@
         q: "Under the Treaty of Paris (1763), what did France lose in North America (1301.3a)?", 
         correct: "Nearly all mainland territory, ceding Canada and trans-Mississippi lands", 
         distractors: [
-          "Only the Caribbean sugar islands of Guadeloupe and Martinique to the British fleet", 
-          "Exclusive trading rights over small fur posts along coastal Maine and the Hudson River", 
-          "Sovereignty over the island of Cuba and the port of Havana to Spanish authorities"
+          "Only the Caribbean sugar islands of Guadeloupe and Martinique to victorious British naval squadrons", 
+          "Exclusive trading rights over small fur posts along coastal Maine and the mouth of the Hudson River", 
+          "Sovereignty over the island of Cuba and the fortified naval port of Havana back to Spanish control"
         ], 
         exp: "The 1763 Treaty of Paris expelled French power from mainland North America, transferring Canada and eastern lands to Britain." 
       },
@@ -1212,9 +1203,9 @@
         q: "Why did the British government decide to tax the American colonists after 1763 (1301.3c)?", 
         correct: "Defraying massive war debts and funding regular military defense in America", 
         distractors: [
-          "Funding royal aristocratic weddings and rebuilding palaces across central London", 
-          "Punishing American colonial merchants for remaining strictly neutral during the fighting", 
-          "Financing Spanish naval exploration expeditions throughout the Pacific and Indian Oceans"
+          "Funding royal aristocratic weddings and rebuilding royal administrative palaces across central London", 
+          "Punishing American colonial merchants for remaining strictly neutral throughout the military fighting", 
+          "Financing Spanish naval exploration expeditions searching for trade routes throughout the Pacific Ocean"
         ], 
         exp: "Britain's national debt doubled during the war, leading Parliament to expect the colonies to help cover defense expenses." 
       },
@@ -1223,31 +1214,31 @@
         q: "What was the patriotic slogan adopted by colonists protesting parliamentary revenue acts (1301.3d)?", 
         correct: "'No taxation without representation'", 
         distractors: [
-          "'Give me liberty or give me cash'", 
-          "'One sovereign nation under God'", 
-          "'Don't tread on British Parliament'"
+          "'Give me complete liberty or give me cash'", 
+          "'One sovereign democratic nation under God'", 
+          "'Never tread upon supreme British Parliament'"
         ], 
         exp: "Colonists argued that paying taxes levied by a Parliament without colonial members violated their rights as Englishmen." 
       },
       { 
         id: "q72", 
         q: "What organization formed in Boston in 1765 to actively coordinate resistance and enforce boycotts against British taxes (1301.3c)?", 
-        correct: "The Sons of Liberty", 
+        correct: "The patriotic Sons of Liberty", 
         distractors: [
-          "Continental Congress", 
-          "House of Burgesses", 
-          "Society of Friends"
+          "The First Continental Congress", 
+          "The Virginia House of Burgesses", 
+          "The Philadelphia Quaker Society"
         ], 
         exp: "The Sons of Liberty organized public protests, enforced non-importation pacts, and resisted British tax policies." 
       },
       { 
         id: "q73", 
         q: "The Townshend Acts of 1767 placed external import taxes on which items (1301.3e)?", 
-        correct: "Glass, lead, paint, paper, and tea", 
+        correct: "Imported glass, lead, paint, paper, and tea", 
         distractors: [
-          "Slaves, raw timber, and pitch", 
-          "Tobacco, rice, and indigo dyes", 
-          "Imported molasses and dark rum"
+          "Enslaved persons, raw pine timber, and naval tar", 
+          "Commercial tobacco, Carolina rice, and indigo dyes", 
+          "Imported foreign molasses and distilled dark rum"
         ], 
         exp: "The Townshend duties taxed common imported goods including glass, lead, paint, paper, and tea." 
       },
@@ -1256,9 +1247,9 @@
         q: "Why did Parliament pass the Tea Act of 1773 (1301.3e)?", 
         correct: "Bailing out the British East India Company by granting it a direct sales monopoly", 
         distractors: [
-          "Banning the public consumption and sale of all teas across Massachusetts taverns", 
-          "Raising import duties on tea to prohibitively expensive levels to discourage drinking", 
-          "Compelling colonial merchants to purchase all tea exclusively from Dutch trading firms"
+          "Banning the public consumption and sale of all teas across taverns in the town of Boston", 
+          "Raising import duties on tea to prohibitively expensive levels to discourage colonial consumption", 
+          "Compelling colonial merchants to purchase all tea supplies exclusively from Dutch trading firms"
         ], 
         exp: "The Tea Act granted the British East India Company a monopoly to sell tea directly, undercutting local colonial merchants." 
       },
@@ -1267,9 +1258,9 @@
         q: "How did colonists in Boston protest the Tea Act on December 16, 1773 (1301.3e)?", 
         correct: "Dumping 342 chests of East India Company tea into the harbor", 
         distractors: [
-          "Burning down the official mansion of the royal governor of Massachusetts", 
-          "Arresting royal customs commissioners at gunpoint on the town commons", 
-          "Forming an immediate defensive treaty of alliance with the French Navy"
+          "Burning down the official brick mansion of the royal governor of Massachusetts in downtown Boston", 
+          "Arresting royal customs commissioners at gunpoint on the town common and holding them for ransom", 
+          "Forming an immediate defensive treaty of alliance with the French Navy operating in the West Indies"
         ], 
         exp: "Disguised Sons of Liberty boarded ships and destroyed 342 chests of East India Company tea in Boston Harbor." 
       },
@@ -1278,9 +1269,9 @@
         q: "How did Parliament respond to the Boston Tea Party in 1774 (1301.3e)?", 
         correct: "Enacting the Coercive Acts, closing Boston Port and suspending self-rule", 
         distractors: [
-          "Repealing all remaining import taxes and duties on colonial trade immediately", 
-          "Withdrawing all British regular infantry regiments and naval vessels from Boston", 
-          "Formally abolishing the royal governorship and recognizing provincial independence"
+          "Repealing all remaining import taxes and duties on colonial shipping across the Atlantic immediately", 
+          "Withdrawing all British regular infantry regiments and Royal Navy vessels from Boston Harbor permanently", 
+          "Formally abolishing the royal governorship and recognizing provincial independence across Massachusetts"
         ], 
         exp: "The Coercive Acts closed Boston Harbor, quartered troops in town, and revoked the Massachusetts charter." 
       },
@@ -1289,31 +1280,31 @@
         q: "What was the main action taken by the First Continental Congress in fall 1774 (1301.3e)?", 
         correct: "Establishing the Continental Association to enforce a commercial boycott", 
         distractors: [
-          "Declaring full political separation and national sovereignty from Great Britain", 
-          "Electing George Washington to serve as president of the newly declared republic", 
-          "Authoring and signing the formal text of the Articles of Confederation government"
+          "Declaring full political separation and independent national sovereignty from the British Empire", 
+          "Electing George Washington to serve as civilian president of the newly declared American republic", 
+          "Authoring and signing the formal constitutional articles for the new Confederation government"
         ], 
         exp: "The First Continental Congress organized the Continental Association to enforce non-importation and non-consumption of British goods." 
       },
       { 
         id: "q78", 
         q: "Where were the first military shots of the American Revolutionary War fired in April 1775 (1301.4a)?", 
-        correct: "Lexington and Concord", 
+        correct: "The Battle of Lexington and Concord", 
         distractors: [
-          "Bunker and Breed's Hill", 
-          "Saratoga and Bennington", 
-          "Valley Forge Encampment"
+          "The fortifications at Bunker and Breed's Hill", 
+          "The Saratoga and Bennington defensive lines", 
+          "The winter encampments across Valley Forge"
         ], 
         exp: "Fighting began on April 19, 1775, when British troops clashed with Massachusetts militiamen at Lexington and Concord." 
       },
       { 
         id: "q79", 
         q: "Who did the Second Continental Congress appoint as Commander-in-Chief of the Continental Army in 1775 (1301.4a)?", 
-        correct: "George Washington", 
+        correct: "Virginia delegate George Washington", 
         distractors: [
-          "General Horatio Gates", 
-          "Nathaniel Bacon Jr.", 
-          "Alexander Hamilton"
+          "Continental general Horatio Gates", 
+          "Frontier rebel Nathaniel Bacon Jr.", 
+          "New York colonel Alexander Hamilton"
         ], 
         exp: "Congress selected George Washington of Virginia to build and lead a unified Continental Army." 
       },
@@ -1322,20 +1313,20 @@
         q: "What role did the Marquis de Lafayette play in the American Revolutionary War (1301.4a)?", 
         correct: "Serving as a major general, leading troops, and securing French naval assistance", 
         distractors: [
-          "Governing French Canada as royal governor while remaining neutral during hostilities", 
-          "Authoring the formal peace articles signed at Paris concluding the Revolutionary War", 
-          "Providing private loans to finance British naval operations throughout the Chesapeake"
+          "Governing French Canada as royal governor while remaining neutral throughout all hostilities", 
+          "Authoring the formal peace articles signed at Paris that officially concluded the Revolutionary War", 
+          "Providing private family loans to finance British naval operations throughout the Chesapeake Bay"
         ], 
         exp: "Lafayette volunteered his service, became a trusted general under Washington, and helped secure French military assistance." 
       },
       { 
         id: "q81", 
         q: "Who was the primary author of the Declaration of Independence in 1776 (1301.4b)?", 
-        correct: "Thomas Jefferson", 
+        correct: "Virginia statesman Thomas Jefferson", 
         distractors: [
-          "Statesman John Adams", 
-          "Benjamin Franklin", 
-          "James Madison Jr."
+          "Massachusetts lawyer John Adams", 
+          "Pennsylvania author Benjamin Franklin", 
+          "Constitution framer James Madison Jr."
         ], 
         exp: "Thomas Jefferson drafted the Declaration of Independence on behalf of the Committee of Five." 
       },
@@ -1344,20 +1335,20 @@
         q: "Which phrase from the Declaration of Independence captures the ideal of natural equality (1301.4b)?", 
         correct: "'All men are created equal'", 
         distractors: [
-          "'Don’t work, you don’t eat'", 
-          "'The United States are one'", 
-          "'For order and government'"
+          "'He who does not labor shall not eat'", 
+          "'The United States are sovereign states'", 
+          "'In order to form a more perfect union'"
         ], 
         exp: "Jefferson wrote the foundational ideal that 'all men are created equal' with unalienable rights." 
       },
       { 
         id: "q83", 
         q: "During the Revolutionary War, colonists who remained loyal to the British Crown were called (1301.4c):", 
-        correct: "Loyalists (Tories)", 
+        correct: "Loyalists (often called Tories)", 
         distractors: [
-          "Patriot Militiamen", 
-          "Federalist Party", 
-          "Radical Whig Faction"
+          "Patriots of the Continental line", 
+          "Federalists supporting ratification", 
+          "Radical Whig parliamentary reformists"
         ], 
         exp: "Colonists loyal to the Crown were known as Loyalists or Tories, opposing the Patriot independence movement." 
       },
@@ -1366,9 +1357,9 @@
         q: "What were the recognized borders of the United States under the Treaty of Paris in 1783 (1301.4c)?", 
         correct: "From the Atlantic west to the Mississippi River, and Canada to Florida", 
         distractors: [
-          "Confined strictly to the original thirteen coastal colonial boundaries and harbors", 
-          "Spanning the entire North American continent from the Atlantic to the Pacific ocean", 
-          "Encompassing all former British territories including Quebec, Nova Scotia, and Florida"
+          "Confined strictly to the original thirteen coastal colonial boundaries and immediate Atlantic ports", 
+          "Spanning the entire North American continent from the Atlantic shoreline west to the Pacific Ocean", 
+          "Encompassing all former British possessions including Quebec, Nova Scotia, and Spanish East Florida"
         ], 
         exp: "The 1783 Treaty of Paris set the Mississippi River as the western boundary and the Great Lakes as the northern boundary." 
       },
@@ -1377,9 +1368,9 @@
         q: "How many branches of government existed under the national Articles of Confederation (1301.5a)?", 
         correct: "One unicameral legislative branch", 
         distractors: [
-          "Three equal balanced branches", 
-          "Two executive and legal branches", 
-          "Four administrative councils"
+          "Three separate and co-equal branches", 
+          "Two executive and judicial councils", 
+          "Four administrative state cabinets"
         ], 
         exp: "The Articles created only a unicameral legislative body, lacking an independent executive or national judiciary." 
       },
@@ -1388,9 +1379,9 @@
         q: "How many votes did each state receive in the Confederation Congress under the Articles of Confederation (1301.5a)?", 
         correct: "One vote per state regardless of its size or population", 
         distractors: [
-          "Proportional votes based strictly on adult white male census records", 
-          "Two votes for small states and up to six votes for large land states", 
-          "Votes determined by the total monetary value of federal tax donations"
+          "Proportional votes based strictly on adult white male tax-paying census rolls", 
+          "Two votes for small states and up to six votes for large landed commonwealths", 
+          "Votes determined by the total monetary value of federal treasury contributions"
         ], 
         exp: "Each state held one vote in the Confederation Congress, ensuring equal state power regardless of size." 
       },
@@ -1401,7 +1392,7 @@
         distractors: [
           "A simple majority of seven out of thirteen", 
           "A supermajority of nine out of thirteen", 
-          "Three-fourths of state ratification conventions"
+          "Three-fourths of state convention votes"
         ], 
         exp: "Amending the Articles required unanimous consent from all 13 states, making necessary reforms nearly impossible." 
       },
@@ -1410,20 +1401,20 @@
         q: "Why did the Articles of Confederation describe the nation as a 'firm league of friendship' (1301.5a)?", 
         correct: "Member states retained their individual sovereignty, freedom, and independence", 
         distractors: [
-          "States agreed to dissolve internal boundaries and merge into one unified state", 
-          "The founding frame created an absolute national monarchy centered in New York", 
-          "The charter established a permanent military and diplomatic union with France"
+          "States agreed to dissolve internal boundaries and merge into one unified national republic", 
+          "The founding frame created an absolute national monarchy centered in the city of New York", 
+          "The charter established a permanent military and diplomatic union with the Kingdom of France"
         ], 
         exp: "The Articles prioritized state sovereignty, keeping the national government weak and decentralized." 
       },
       { 
         id: "q89", 
         q: "What phrase commonly used before the Constitution reflected state supremacy over national unity (1301.5b)?", 
-        correct: "'The United States are'", 
+        correct: "'The United States are sovereign'", 
         distractors: [
-          "'The United States is'", 
-          "'One indivisible nation'", 
-          "'Supreme federal union'"
+          "'The United States is one nation'", 
+          "'One single and indivisible land'", 
+          "'Supreme centralized federal power'"
         ], 
         exp: "Referring to 'the United States are' highlighted that the country was viewed as a collection of separate states rather than a single nation." 
       },
@@ -1432,31 +1423,31 @@
         q: "What was the official purpose of the Philadelphia Convention when delegates met in May 1787 (1301.5c)?", 
         correct: "Revising and amending the existing Articles of Confederation", 
         distractors: [
-          "Declaring an armed offensive war against Spanish forces in Florida", 
-          "Crowning George Washington as the constitutional monarch of America", 
-          "Negotiating exclusive transatlantic trade compacts with Great Britain"
+          "Declaring an armed offensive war against Spanish forces occupying the Gulf of Mexico", 
+          "Crowning General George Washington as the constitutional monarch of North America", 
+          "Negotiating exclusive transatlantic trade compacts and military treaties with Great Britain"
         ], 
         exp: "Delegates initially convened to revise the Articles of Confederation, but quickly decided to draft an entirely new Constitution." 
       },
       { 
         id: "q91", 
         q: "Who is known as the 'Father of the Constitution' for designing the Virginia Plan and keeping notes (1301.6a)?", 
-        correct: "James Madison", 
+        correct: "Virginia delegate James Madison", 
         distractors: [
-          "Alexander Hamilton", 
-          "Benjamin Franklin", 
-          "Chief John Jay"
+          "Federalist author Alexander Hamilton", 
+          "Pennsylvania sage Benjamin Franklin", 
+          "Supreme Court Chief Justice John Jay"
         ], 
         exp: "James Madison earned this title by outlining the Virginia Plan and keeping detailed daily records of the convention." 
       },
       { 
         id: "q92", 
         q: "In the U.S. Constitution, which house of Congress features equal representation (1301.6b)?", 
-        correct: "The Senate", 
+        correct: "The United States Senate", 
         distractors: [
-          "House of Representatives", 
-          "The Electoral College", 
-          "The Federal Judiciary"
+          "The House of Representatives", 
+          "The Presidential Electoral College", 
+          "The Supreme Court of the United States"
         ], 
         exp: "Under the Great Compromise, the Senate provides two senators per state regardless of population." 
       },
@@ -1465,9 +1456,9 @@
         q: "In the U.S. Constitution, which house of Congress features proportional representation based on population (1301.6b)?", 
         correct: "The House of Representatives", 
         distractors: [
-          "The United States Senate", 
-          "The Presidential Cabinet", 
-          "The Confederation Council"
+          "The United States Senate chamber", 
+          "The President's Executive Cabinet", 
+          "The Confederation Council of States"
         ], 
         exp: "The House of Representatives allocates seats proportionally to each state based on population." 
       },
@@ -1476,9 +1467,9 @@
         q: "What constitutional system prevents any single branch of the federal government from becoming too powerful (1301.6c)?", 
         correct: "Separation of Powers and Checks and Balances", 
         distractors: [
-          "Imperial Salutary Neglect and Home Governance", 
-          "Virtual Representation within Federal Chambers", 
-          "Unicameral Legislative Supremacy over Courts"
+          "Imperial Salutary Neglect and Home Governance rules", 
+          "Virtual Representation within Parliamentary Chambers", 
+          "Unicameral Legislative Supremacy over Civilian Courts"
         ], 
         exp: "Separation of powers and checks and balances give each branch distinct duties and the ability to limit the other branches." 
       },
@@ -1487,9 +1478,9 @@
         q: "Under the original Constitution, how were United States Senators chosen before the 17th Amendment (1301.6c)?", 
         correct: "Elected by individual state legislatures", 
         distractors: [
-          "Chosen by direct popular vote of citizens", 
-          "Appointed directly by the sitting president", 
-          "Selected by the House of Representatives"
+          "Chosen by direct popular vote of eligible state citizens", 
+          "Appointed directly by the sitting president of the United States", 
+          "Selected by a majority vote within the House of Representatives"
         ], 
         exp: "Originally, state legislatures elected U.S. Senators to ensure state governments retained leverage over federal law." 
       },
@@ -1498,20 +1489,20 @@
         q: "What primary promise convinced reluctant states (such as Virginia and New York) to ratify the Constitution?", 
         correct: "Adding a Bill of Rights to protect individual liberties", 
         distractors: [
-          "Relocating the permanent national capital city to Boston", 
-          "Abolishing all internal federal excise taxes and duties", 
-          "Dissolving the Senate in favor of direct popular rule"
+          "Relocating the permanent national capital city to central Boston", 
+          "Abolishing all internal federal excise taxes, tariffs, and customs duties", 
+          "Dissolving the Senate in favor of direct nationwide popular referendums"
         ], 
         exp: "Federalists secured ratification by pledging to add a Bill of Rights during the First Congress." 
       },
       { 
         id: "q97", 
         q: "Which amendment protects citizens from being forced to quarter soldiers in private homes during peacetime?", 
-        correct: "Third Amendment", 
+        correct: "The Third Constitutional Amendment", 
         distractors: [
-          "First Amendment", 
-          "Fifth Amendment", 
-          "Seventh Amendment"
+          "The First Free Expression Amendment", 
+          "The Fifth Due Process Amendment", 
+          "The Seventh Common Law Amendment"
         ], 
         exp: "The Third Amendment prohibits housing troops in private homes without the owner's consent during peacetime." 
       },
@@ -1520,9 +1511,9 @@
         q: "What right is explicitly guaranteed by the Sixth Amendment?", 
         correct: "Right to a speedy trial by an impartial jury with counsel", 
         distractors: [
-          "Freedom of peaceful assembly and petitioning government", 
-          "Protection from cruel, unusual, and excessive punishments", 
-          "The personal individual right to keep and bear firearms"
+          "Freedom of peaceful public assembly and petitioning the legislature", 
+          "Protection from cruel, unusual, and excessive capital punishments", 
+          "The personal individual right to keep, bear, and maintain firearms"
         ], 
         exp: "The Sixth Amendment guarantees the right to a speedy, public trial, an impartial jury, and defense counsel." 
       },
@@ -1531,9 +1522,9 @@
         q: "What is the primary function of the Seventh Amendment?", 
         correct: "Guaranteeing jury trials in civil lawsuits over twenty dollars", 
         distractors: [
-          "Abolishing state-level poll taxes and voter property thresholds", 
-          "Establishing strict two-term limits on presidential tenures", 
-          "Protecting defendants from double jeopardy in capital crimes"
+          "Abolishing state-level poll taxes and real estate voter thresholds", 
+          "Establishing strict two-term limits on executive presidential tenures", 
+          "Protecting defendants from double jeopardy in capital felony crimes"
         ], 
         exp: "The Seventh Amendment preserves the right to a jury trial in civil lawsuits exceeding twenty dollars." 
       },
@@ -1542,9 +1533,9 @@
         q: "What protection is established by the Eighth Amendment?", 
         correct: "Banning excessive bail, fines, and cruel and unusual punishments", 
         distractors: [
-          "Protecting freedom of the press and public religious worship", 
-          "Guaranteeing the right of the accused to confront witnesses", 
-          "Reserving non-delegated powers to state assemblies and people"
+          "Protecting freedom of the press, assembly, and religious worship", 
+          "Guaranteeing the absolute right of the accused to confront witnesses", 
+          "Reserving non-delegated sovereign powers to state assemblies and people"
         ], 
         exp: "The Eighth Amendment bars excessive bail, unreasonable fines, and cruel and unusual punishments." 
       }
@@ -1596,9 +1587,9 @@
     }
 
     /* ============================================================
-       PERSISTENCE SYSTEM: V16
+       PERSISTENCE SYSTEM: V17 (FRESH STORAGE KEY)
        ============================================================ */
-    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V16';
+    const STORAGE_KEY = 'HIST1301_ALICE_ENGINE_V17';
     let arcadeData = { chrono: {}, quiz: {}, cards: {} };
 
     function loadStore() {
@@ -1809,7 +1800,7 @@
     }
 
     /* ============================================================
-       MODULE 2: MASTERY QUIZ
+       MODULE 2: MASTERY QUIZ (RANDOMIZED CHOICES A-D)
        ============================================================ */
     let qPool = [], qIdx = 0, qCorrect = 0, currentRenderedOpts = [];
 
@@ -1905,7 +1896,7 @@
     }
 
     /* ============================================================
-       MODULE 3: MATCHING LAB
+       MODULE 3: MATCHING LAB (SHUFFLED ROWS & INDEPENDENT CHOICES)
        ============================================================ */
     let shuffledMatchingRows = [];
 
@@ -1956,7 +1947,7 @@
     }
 
     /* ============================================================
-       MODULE 4: FLASHCARDS
+       MODULE 4: FLASHCARDS (DEFINITION ON FRONT, TERM ON BACK)
        ============================================================ */
     let cardIdx = 0;
 
